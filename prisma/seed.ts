@@ -16,9 +16,10 @@ async function main() {
 
   await prisma.statusPageUser.upsert({
     where: { organizationId_email: { organizationId: org.id, email: "admin@polyaccess.tech" } },
-    update: {},
+    update: { passwordHash: hashedPassword },
     create: {
       email: "admin@polyaccess.tech",
+      passwordHash: hashedPassword,
       role: "admin",
       organizationId: org.id,
     },
