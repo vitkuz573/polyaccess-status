@@ -16,7 +16,7 @@ import {
 
 export default async function AdminMaintenancePage() {
   const admin = await getCurrentAdmin();
-  if (!admin) redirect("/admin/login");
+  if (!admin) redirect("/login");
 
   const maintenances = await prisma.maintenance.findMany({
     where: { statusPage: { organizationId: admin.organizationId } },

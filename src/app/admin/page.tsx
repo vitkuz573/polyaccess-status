@@ -21,7 +21,7 @@ import {
 
 export default async function AdminDashboardPage() {
   const admin = await getCurrentAdmin();
-  if (!admin) redirect("/admin/login");
+  if (!admin) redirect("/login");
 
   const statusPage = await prisma.statusPage.findFirst({
     where: { organizationId: admin.organizationId },

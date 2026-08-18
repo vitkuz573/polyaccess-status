@@ -16,7 +16,7 @@ import { ServerIcon, CheckCircle2Icon, AlertCircleIcon, ActivityIcon } from "luc
 
 export default async function AdminComponentsPage() {
   const admin = await getCurrentAdmin();
-  if (!admin) redirect("/admin/login");
+  if (!admin) redirect("/login");
 
   const components = await prisma.component.findMany({
     where: { statusPage: { organizationId: admin.organizationId } },

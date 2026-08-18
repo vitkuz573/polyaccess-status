@@ -27,7 +27,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <div className="status-dark flex min-h-screen items-center justify-center bg-[#020617] text-[var(--sp-text)]">
         <div className="text-center">
           <p className="text-lg">You are not signed in.</p>
-          <Link href="/admin/login" className="mt-4 inline-block text-[var(--sp-emerald)] underline">
+          <Link href="/login" className="mt-4 inline-block text-[var(--sp-emerald)] underline">
             Go to login
           </Link>
         </div>

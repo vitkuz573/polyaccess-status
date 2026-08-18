@@ -4,7 +4,7 @@ import { jwtVerify } from "jose";
 import { env } from "./lib/env";
 
 const ACCESS_COOKIE = "pa_status_session";
-const ADMIN_LOGIN_PATH = "/admin/login";
+const ADMIN_LOGIN_PATH = "/login";
 
 export const config = {
   matcher: ["/admin/:path*"],

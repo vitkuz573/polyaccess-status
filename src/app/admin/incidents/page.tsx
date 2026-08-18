@@ -20,7 +20,7 @@ import {
 
 export default async function AdminIncidentsPage() {
   const admin = await getCurrentAdmin();
-  if (!admin) redirect("/admin/login");
+  if (!admin) redirect("/login");
 
   const [active, history] = await Promise.all([
     prisma.incident.findMany({
