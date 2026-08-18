@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { getPublicStatusPages } from "@/lib/queries";
 import { overallStatus, uptimePercentage } from "@/lib/status";
@@ -12,7 +11,16 @@ export default async function Home() {
   const pages = await getPublicStatusPages();
 
   if (pages.length === 1) {
-    redirect(`/${pages[0].slug}`);
+    const slug = pages[0].slug;
+    return (
+      <div className="status-dark status-aurora flex min-h-screen flex-col items-center justify-center text-center">
+        <title>PolyAccess Status</title>
+        <meta httpEquiv="refresh" content={`0;url=/${slug}`} />
+        <p className="text-[var(--sp-text-secondary)]">
+          Redirecting to <Link href={`/${slug}`} className="text-[var(--sp-text)] underline">status page</Link>...
+        </p>
+      </div>
+    );
   }
 
   const pagesWithStatus = pages.map((page) => {
