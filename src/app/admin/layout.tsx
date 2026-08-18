@@ -3,12 +3,12 @@ import { redirect } from "next/navigation";
 import { getCurrentAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { Button } from "@/components/ui/button";
+import { LogoutButton } from "./components/logout-button";
 import {
   LayoutDashboardIcon,
   LayersIcon,
   AlertTriangleIcon,
   WrenchIcon,
-  LogOutIcon,
   MenuIcon,
   XIcon,
   ActivityIcon,
@@ -65,16 +65,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </nav>
 
         <div className="shrink-0 border-t border-[var(--sp-border)] p-4">
-          <form action="/api/admin/auth/logout" method="POST">
-            <Button
-              type="submit"
-              variant="ghost"
-              className="w-full justify-start gap-3 text-[var(--sp-text-secondary)] hover:bg-[rgba(255,255,255,0.06)] hover:text-[var(--sp-text)]"
-            >
-              <LogOutIcon className="h-4 w-4" />
-              Sign out
-            </Button>
-          </form>
+          <LogoutButton
+            variant="ghost"
+            className="w-full justify-start gap-3 text-[var(--sp-text-secondary)] hover:bg-[rgba(255,255,255,0.06)] hover:text-[var(--sp-text)]"
+          >
+            Sign out
+          </LogoutButton>
         </div>
       </aside>
 
@@ -105,17 +101,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--sp-emerald-soft)] text-xs font-semibold text-[var(--sp-emerald)] ring-1 ring-[var(--sp-emerald)]/20">
               {admin.email.charAt(0).toUpperCase()}
             </div>
-            <form action="/api/admin/auth/logout" method="POST" className="hidden sm:block">
-              <Button
-                type="submit"
-                variant="outline"
-                size="sm"
-                className="border-[var(--sp-border)] bg-transparent text-[var(--sp-text-secondary)] hover:bg-[rgba(255,255,255,0.06)] hover:text-[var(--sp-text)]"
-              >
-                <LogOutIcon className="mr-1.5 h-4 w-4" />
-                Logout
-              </Button>
-            </form>
+            <LogoutButton
+              variant="outline"
+              className="border-[var(--sp-border)] bg-transparent text-[var(--sp-text-secondary)] hover:bg-[rgba(255,255,255,0.06)] hover:text-[var(--sp-text)]"
+            >
+              Logout
+            </LogoutButton>
           </div>
         </header>
 
