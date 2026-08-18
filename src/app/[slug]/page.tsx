@@ -9,6 +9,7 @@ import {
   IncidentCard,
   MaintenanceCard,
   IncidentHistoryCard,
+  SubscriptionForm,
 } from "@/components/status";
 
 export const revalidate = 10;
@@ -152,15 +153,7 @@ export default async function StatusPage({ params }: Props) {
             </section>
           )}
 
-          <section className="status-glass rounded-2xl p-6 text-center sm:p-8">
-            <h3 className="text-base font-semibold text-[var(--sp-text)]">
-              Stay in the loop
-            </h3>
-            <p className="mt-1 text-sm text-[var(--sp-text-secondary)]">
-              Subscribe to receive incident and maintenance notifications.
-              Subscription form coming soon.
-            </p>
-          </section>
+          <SubscriptionForm slug={slug} />
         </div>
       </main>
 

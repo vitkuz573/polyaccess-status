@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "PolyAccess Status",
@@ -17,6 +18,7 @@ export default function RootLayout({
         <div id="public-root" className="contents">
           {children}
         </div>
+        <Toaster />
       </body>
     </html>
   );

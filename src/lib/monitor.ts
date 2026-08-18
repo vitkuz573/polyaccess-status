@@ -9,6 +9,12 @@ export type CheckResultPayload = {
   message?: string;
 };
 
+function isProviderHealthBody(body: unknown): body is {
+  providers?: Record<string, { healthy?: boolean; status?: string }>;
+} {
+  return typeof body === "object" && body !== null && "providers" in body;
+}
+
 async function fetchHealth(target: string, timeoutMs: number): Promise<CheckResultPayload> {
   const start = Date.now();
 
@@ -19,41 +25,56 @@ async function fetchHealth(target: string, timeoutMs: number): Promise<CheckResu
     });
     const responseTime = Date.now() - start;
 
+    const body = await res.json().catch(() => null);
+
     if (!res.ok) {
-      return { status: "down", responseTime, statusCode: res.status, message: `HTTP ${res.status}` };
+      return {
+        status: "down",
+        responseTime,
+        statusCode: res.status,
+        message: `HTTP ${res.status}`,
+      };
     }
 
-    const body = await res.json().catch(() => null);
-    return { status: "up", responseTime, statusCode: res.status, message: body ? "Healthy" : "No body" };
+    // Challenge Proxy returns { providers: { ... } } with per-provider health.
+    if (isProviderHealthBody(body)) {
+      const providers = body.providers;
+      const values = Object.values(providers ?? {});
+      if (values.length === 0) {
+        return { status: "up", responseTime, statusCode: res.status, message: "Healthy" };
+      }
+      const down = values.filter((p) => p.healthy === false).length;
+      if (down === 0) {
+        return { status: "up", responseTime, statusCode: res.status, message: "All providers healthy" };
+      }
+      if (down === values.length) {
+        return {
+          status: "down",
+          responseTime,
+          statusCode: res.status,
+          message: `All ${values.length} providers down`,
+        };
+      }
+      return {
+        status: "degraded",
+        responseTime,
+        statusCode: res.status,
+        message: `${down} of ${values.length} providers down`,
+      };
+    }
+
+    return {
+      status: "up",
+      responseTime,
+      statusCode: res.status,
+      message: body ? "Healthy" : "No body",
+    };
   } catch (err) {
     return {
       status: "down",
       responseTime: Date.now() - start,
       message: err instanceof Error ? err.message : "Request failed",
     };
-  }
-}
-
-async function fetchChallengeProxyHealth(
-  target: string,
-  timeoutMs: number
-): Promise<CheckResultPayload> {
-  const result = await fetchHealth(target, timeoutMs);
-  if (result.status !== "up") return result;
-
-  try {
-    const res = await fetch(target, { headers: { Accept: "application/json" } });
-    const body = await res.json();
-    const providers = body.providers as Record<string, { healthy: boolean; status?: string }> | undefined;
-    if (!providers) return { ...result, status: "up" };
-
-    const values = Object.values(providers);
-    const down = values.filter((p) => !p.healthy).length;
-    if (down === 0) return { ...result, status: "up", message: "All providers healthy" };
-    if (down === values.length) return { ...result, status: "down", message: `All ${values.length} providers down` };
-    return { ...result, status: "degraded", message: `${down} of ${values.length} providers down` };
-  } catch {
-    return { ...result, status: "up" };
   }
 }
 
@@ -64,10 +85,7 @@ export async function runCheck(checkId: string): Promise<CheckResultPayload> {
   });
   if (!check) throw new Error("Check not found");
 
-  const payload =
-    check.type === "challenge_proxy_health"
-      ? await fetchChallengeProxyHealth(check.target, check.timeout * 1000)
-      : await fetchHealth(check.target, check.timeout * 1000);
+  const payload = await fetchHealth(check.target, check.timeout * 1000);
 
   await prisma.checkResult.create({
     data: {
@@ -83,7 +101,10 @@ export async function runCheck(checkId: string): Promise<CheckResultPayload> {
 
   await aggregateComponentStatus(check.componentId);
 
-  await redis.publish("status:updates", JSON.stringify({ componentId: check.componentId, status: payload.status }));
+  await redis.publish(
+    "status:updates",
+    JSON.stringify({ componentId: check.componentId, status: payload.status })
+  );
 
   return payload;
 }

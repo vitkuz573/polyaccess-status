@@ -3,6 +3,7 @@ export * from "./status-pill";
 export * from "./status-banner";
 export * from "./status-page-header";
 export * from "./status-page-footer";
+export * from "./subscription-form";
 export * from "./component-group-card";
 export * from "./incident-card";
 export * from "./maintenance-card";
