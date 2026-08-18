@@ -1,5 +1,6 @@
 import { prisma } from "../src/lib/db";
 import { env } from "../src/lib/env";
+import bcrypt from "bcryptjs";
 
 async function main() {
   const org = await prisma.organization.upsert({
@@ -8,6 +9,18 @@ async function main() {
     create: {
       name: "PolyAccess",
       slug: "polyaccess",
+    },
+  });
+
+  const hashedPassword = await bcrypt.hash("statusadmin123", 12);
+
+  await prisma.statusPageUser.upsert({
+    where: { organizationId_email: { organizationId: org.id, email: "admin@polyaccess.tech" } },
+    update: {},
+    create: {
+      email: "admin@polyaccess.tech",
+      role: "admin",
+      organizationId: org.id,
     },
   });
 
@@ -84,6 +97,8 @@ async function main() {
 
   // eslint-disable-next-line no-console
   console.log("Seeded PolyAccess status page.");
+  // eslint-disable-next-line no-console
+  console.log(`Default admin: admin@polyaccess.tech / statusadmin123`);
 }
 
 main()

@@ -294,10 +294,11 @@ enum StatusPageRole {
 }
 
 model StatusPageUser {
-  id        String         @id @default(uuid()) @db.Uuid
-  email     String
-  keyUserId String?        @map("key_user_id")
-  role      StatusPageRole @default(viewer)
+  id            String         @id @default(uuid()) @db.Uuid
+  email         String
+  passwordHash  String?        @map("password_hash")
+  keyUserId     String?        @map("key_user_id")
+  role          StatusPageRole @default(viewer)
 
   organizationId String       @map("organization_id") @db.Uuid
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
