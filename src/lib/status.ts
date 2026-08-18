@@ -71,6 +71,13 @@ export const incidentImpactMeta: Record<IncidentImpact, { label: string; theme: 
   critical: { label: "Critical", theme: statusMeta.major_outage },
 };
 
+export const incidentImpactStatusMap: Record<IncidentImpact, ComponentStatus> = {
+  none: "operational",
+  minor: "degraded",
+  major: "partial_outage",
+  critical: "major_outage",
+};
+
 export const incidentStatusMeta: Record<IncidentStatus, { label: string }> = {
   investigating: { label: "Investigating" },
   identified: { label: "Identified" },

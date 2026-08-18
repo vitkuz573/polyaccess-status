@@ -2,8 +2,10 @@ import { ComponentStatus } from "@prisma/client";
 import { cn } from "@/lib/utils";
 import { statusColorClass } from "@/lib/status";
 
+type StatusDotStatus = ComponentStatus;
+
 interface StatusDotProps {
-  status: ComponentStatus;
+  status: StatusDotStatus;
   size?: "sm" | "md" | "lg";
   pulse?: boolean;
   glow?: boolean;

@@ -3,13 +3,9 @@ import { getCurrentAdmin } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import {
-  statusLabel,
-  statusTextClass,
-  statusBgSoftClass,
-  uptimePercentage,
-} from "@/lib/status";
-import { StatusDot } from "@/components/status/status-dot";
+import { ComponentStatusBadge } from "@/components/ui/status-badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { uptimePercentage } from "@/lib/status";
 import { formatDistanceToNow } from "date-fns";
 import { RunChecksButton } from "./run-checks-button";
 import { ServerIcon, CheckCircle2Icon, AlertCircleIcon, ActivityIcon } from "lucide-react";
@@ -58,9 +54,9 @@ export default async function AdminComponentsPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <Card className="status-glass border-[var(--sp-border)] bg-[#0b1021]">
+        <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-[var(--sp-text-tertiary)]">
+            <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--sp-text-tertiary)]">
               <ServerIcon className="h-4 w-4" />
               Total components
             </CardTitle>
@@ -70,9 +66,9 @@ export default async function AdminComponentsPage() {
           </CardContent>
         </Card>
 
-        <Card className="status-glass border-[var(--sp-border)] bg-[#0b1021]">
+        <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-[var(--sp-text-tertiary)]">
+            <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--sp-text-tertiary)]">
               <ActivityIcon className="h-4 w-4" />
               Total checks run
             </CardTitle>
@@ -82,9 +78,9 @@ export default async function AdminComponentsPage() {
           </CardContent>
         </Card>
 
-        <Card className="status-glass border-[var(--sp-border)] bg-[#0b1021]">
+        <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-[var(--sp-text-tertiary)]">
+            <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--sp-text-tertiary)]">
               <CheckCircle2Icon className="h-4 w-4" />
               Operational
             </CardTitle>
@@ -98,18 +94,18 @@ export default async function AdminComponentsPage() {
       </div>
 
       {components.length === 0 ? (
-        <Card className="status-glass border-[var(--sp-border)] bg-[#0b1021]">
-          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-            <ServerIcon className="h-10 w-10 text-[var(--sp-text-tertiary)]" />
-            <p className="mt-4 text-sm font-medium text-[var(--sp-text)]">No components yet</p>
-            <p className="mt-1 text-xs text-[var(--sp-text-tertiary)]">
-              Components will appear here once added to your status page.
-            </p>
+        <Card>
+          <CardContent>
+            <EmptyState
+              icon={ServerIcon}
+              title="No components yet"
+              description="Components will appear here once added to your status page."
+            />
           </CardContent>
         </Card>
       ) : (
         Object.entries(grouped).map(([groupName, items]) => (
-          <Card key={groupName} className="status-glass border-[var(--sp-border)] bg-[#0b1021]">
+          <Card key={groupName}>
             <CardHeader>
               <CardTitle className="text-[var(--sp-text)]">{groupName}</CardTitle>
               <CardDescription className="text-[var(--sp-text-tertiary)]">
@@ -120,12 +116,12 @@ export default async function AdminComponentsPage() {
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
-                    <TableRow className="border-[var(--sp-border)] hover:bg-transparent">
-                      <TableHead className="text-[var(--sp-text-tertiary)]">Component</TableHead>
-                      <TableHead className="text-[var(--sp-text-tertiary)]">Status</TableHead>
-                      <TableHead className="text-[var(--sp-text-tertiary)]">Uptime</TableHead>
-                      <TableHead className="text-[var(--sp-text-tertiary)]">Last checked</TableHead>
-                      <TableHead className="text-[var(--sp-text-tertiary)]">Latest result</TableHead>
+                    <TableRow>
+                      <TableHead>Component</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Uptime</TableHead>
+                      <TableHead>Last checked</TableHead>
+                      <TableHead>Latest result</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -135,7 +131,7 @@ export default async function AdminComponentsPage() {
                       const uptime = uptimePercentage(allResults);
 
                       return (
-                        <TableRow key={c.id} className="border-[var(--sp-border)]">
+                        <TableRow key={c.id}>
                           <TableCell>
                             <div className="font-medium text-[var(--sp-text)]">{c.name}</div>
                             {c.description && (
@@ -145,12 +141,7 @@ export default async function AdminComponentsPage() {
                             )}
                           </TableCell>
                           <TableCell>
-                            <div
-                              className={`inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${statusBgSoftClass(c.status)} ${statusTextClass(c.status)} ${statusTextClass(c.status).replace("text-", "ring-")}/20`}
-                            >
-                              <StatusDot status={c.status} size="sm" />
-                              {statusLabel(c.status)}
-                            </div>
+                            <ComponentStatusBadge status={c.status} />
                           </TableCell>
                           <TableCell className="tabular-nums text-[var(--sp-text)]">
                             {uptime.toFixed(2)}%

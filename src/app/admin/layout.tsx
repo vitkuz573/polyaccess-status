@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { getCurrentAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { Button } from "@/components/ui/button";
@@ -23,16 +24,7 @@ const links = [
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const admin = await getCurrentAdmin();
   if (!admin) {
-    return (
-      <div className="status-dark flex min-h-screen items-center justify-center bg-[#020617] text-[var(--sp-text)]">
-        <div className="text-center">
-          <p className="text-lg">You are not signed in.</p>
-          <Link href="/login" className="mt-4 inline-block text-[var(--sp-emerald)] underline">
-            Go to login
-          </Link>
-        </div>
-      </div>
-    );
+    redirect("/login");
   }
 
   const organization = await prisma.organization.findUnique({
@@ -41,57 +33,55 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   });
 
   return (
-    <div className="status-dark flex min-h-screen bg-[#020617]">
+    <div className="status-dark flex h-screen overflow-hidden bg-[#020617]">
       <input type="checkbox" id="admin-sidebar-toggle" className="peer sr-only" />
 
-      <aside className="fixed inset-y-0 left-0 z-40 w-64 -translate-x-full border-r border-[var(--sp-border)] bg-[#0b1021] transition-transform duration-200 peer-checked:translate-x-0 lg:static lg:translate-x-0">
-        <div className="flex h-full flex-col">
-          <div className="flex h-16 items-center gap-3 border-b border-[var(--sp-border)] px-6">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--sp-emerald-soft)] ring-1 ring-[var(--sp-emerald)]/20">
-              <ActivityIcon className="h-5 w-5 text-[var(--sp-emerald)]" />
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-[var(--sp-text)]">PolyAccess</div>
-              <div className="text-xs text-[var(--sp-text-tertiary)]">Status Admin</div>
-            </div>
+      <aside className="fixed inset-y-0 left-0 z-40 flex h-screen w-64 -translate-x-full flex-col border-r border-[var(--sp-border)] bg-[#0b1021] transition-transform duration-200 peer-checked:translate-x-0 lg:static lg:translate-x-0">
+        <div className="flex h-16 shrink-0 items-center gap-3 border-b border-[var(--sp-border)] px-6">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--sp-emerald-soft)] ring-1 ring-[var(--sp-emerald)]/20">
+            <ActivityIcon className="h-5 w-5 text-[var(--sp-emerald)]" />
           </div>
-
-          <nav className="flex-1 space-y-1 p-4">
-            {links.map((l) => {
-              const Icon = l.icon;
-              return (
-                <Link key={l.href} href={l.href} className="block">
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start gap-3 text-[var(--sp-text-secondary)] hover:bg-[rgba(255,255,255,0.06)] hover:text-[var(--sp-text)]"
-                  >
-                    <Icon className="h-4 w-4" />
-                    {l.label}
-                  </Button>
-                </Link>
-              );
-            })}
-          </nav>
-
-          <div className="border-t border-[var(--sp-border)] p-4">
-            <form action="/api/admin/auth/logout" method="POST">
-              <Button
-                type="submit"
-                variant="ghost"
-                className="w-full justify-start gap-3 text-[var(--sp-text-secondary)] hover:bg-[rgba(255,255,255,0.06)] hover:text-[var(--sp-text)]"
-              >
-                <LogOutIcon className="h-4 w-4" />
-                Sign out
-              </Button>
-            </form>
+          <div>
+            <div className="text-sm font-semibold text-[var(--sp-text)]">PolyAccess</div>
+            <div className="text-xs text-[var(--sp-text-tertiary)]">Status Admin</div>
           </div>
+        </div>
+
+        <nav className="flex-1 space-y-1 overflow-y-auto p-4">
+          {links.map((l) => {
+            const Icon = l.icon;
+            return (
+              <Link key={l.href} href={l.href} className="block">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start gap-3 text-[var(--sp-text-secondary)] hover:bg-[rgba(255,255,255,0.06)] hover:text-[var(--sp-text)]"
+                >
+                  <Icon className="h-4 w-4" />
+                  {l.label}
+                </Button>
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="shrink-0 border-t border-[var(--sp-border)] p-4">
+          <form action="/api/admin/auth/logout" method="POST">
+            <Button
+              type="submit"
+              variant="ghost"
+              className="w-full justify-start gap-3 text-[var(--sp-text-secondary)] hover:bg-[rgba(255,255,255,0.06)] hover:text-[var(--sp-text)]"
+            >
+              <LogOutIcon className="h-4 w-4" />
+              Sign out
+            </Button>
+          </form>
         </div>
       </aside>
 
       <div className="fixed inset-0 z-30 hidden bg-black/50 backdrop-blur-sm peer-checked:block lg:hidden" />
 
-      <div className="flex flex-1 flex-col">
-        <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-[var(--sp-border)] bg-[#020617]/80 px-4 backdrop-blur-md sm:px-6 lg:px-8">
+      <div className="flex h-screen flex-1 flex-col overflow-hidden">
+        <header className="sticky top-0 z-20 flex h-16 shrink-0 items-center justify-between border-b border-[var(--sp-border)] bg-[#020617]/80 px-4 backdrop-blur-md sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
             <label
               htmlFor="admin-sidebar-toggle"
@@ -129,7 +119,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </div>
         </header>
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">{children}</main>
       </div>
     </div>
   );

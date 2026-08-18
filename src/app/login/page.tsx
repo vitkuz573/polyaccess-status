@@ -1,20 +1,23 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useTransition, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ShieldCheckIcon, AlertCircleIcon, Loader2Icon } from "lucide-react";
 import { toast } from "sonner";
 
-export default function AdminLoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("from") ?? "/admin";
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
-  const [loading, setLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   function validate(): boolean {
     const errors: { email?: string; password?: string } = {};
@@ -35,28 +38,23 @@ export default function AdminLoginPage() {
     setError("");
     if (!validate()) return;
 
-    setLoading(true);
-    try {
-      const res = await fetch("/api/admin/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+    const res = await fetch("/api/admin/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
 
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        setError(data.error ?? "Invalid credentials");
-        return;
-      }
-
-      toast.success("Signed in successfully");
-      router.push("/admin");
-      router.refresh();
-    } catch {
-      setError("Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setError(data.error ?? "Invalid credentials");
+      return;
     }
+
+    toast.success("Signed in successfully");
+    startTransition(() => {
+      router.push(redirectTo);
+      router.refresh();
+    });
   }
 
   return (
@@ -89,6 +87,7 @@ export default function AdminLoginPage() {
                 autoComplete="email"
                 placeholder="admin@polyaccess.tech"
                 value={email}
+                disabled={isPending}
                 onChange={(e) => {
                   setEmail(e.target.value);
                   if (fieldErrors.email) setFieldErrors((prev) => ({ ...prev, email: undefined }));
@@ -113,6 +112,7 @@ export default function AdminLoginPage() {
                 autoComplete="current-password"
                 placeholder="••••••••"
                 value={password}
+                disabled={isPending}
                 onChange={(e) => {
                   setPassword(e.target.value);
                   if (fieldErrors.password)
@@ -135,10 +135,10 @@ export default function AdminLoginPage() {
 
             <Button
               type="submit"
-              disabled={loading}
+              disabled={isPending}
               className="h-10 w-full bg-[var(--sp-emerald)] text-[#020617] hover:bg-[var(--sp-emerald)]/90"
             >
-              {loading ? (
+              {isPending ? (
                 <>
                   <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
                   Signing in...
@@ -155,5 +155,22 @@ export default function AdminLoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="status-dark status-aurora flex min-h-screen flex-col items-center justify-center px-4">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0b1021] to-[#020617]" />
+        <div className="relative z-10 w-full max-w-md">
+          <div className="status-glass-strong rounded-2xl p-6 sm:p-8">
+            <div className="h-10 animate-pulse rounded-lg bg-[var(--sp-surface)]" />
+          </div>
+        </div>
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }

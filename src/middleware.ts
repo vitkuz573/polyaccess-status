@@ -12,25 +12,31 @@ export const config = {
 };
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, search } = request.nextUrl;
 
-  if (!pathname.startsWith("/admin") || pathname === ADMIN_LOGIN_PATH) {
+  if (!pathname.startsWith("/admin")) {
     return NextResponse.next();
   }
 
   const token = request.cookies.get(ACCESS_COOKIE)?.value;
   if (!token) {
-    return NextResponse.redirect(new URL(ADMIN_LOGIN_PATH, request.url));
+    const loginUrl = new URL(ADMIN_LOGIN_PATH, request.url);
+    loginUrl.searchParams.set("from", pathname + search);
+    return NextResponse.redirect(loginUrl);
   }
 
   try {
     const secret = new TextEncoder().encode(env.ACCESS_TOKEN_SECRET);
     const { payload } = await jwtVerify(token, secret);
     if (payload.type !== "status_admin") {
-      return NextResponse.redirect(new URL(ADMIN_LOGIN_PATH, request.url));
+      const loginUrl = new URL(ADMIN_LOGIN_PATH, request.url);
+      loginUrl.searchParams.set("from", pathname + search);
+      return NextResponse.redirect(loginUrl);
     }
     return NextResponse.next();
   } catch {
-    return NextResponse.redirect(new URL(ADMIN_LOGIN_PATH, request.url));
+    const loginUrl = new URL(ADMIN_LOGIN_PATH, request.url);
+    loginUrl.searchParams.set("from", pathname + search);
+    return NextResponse.redirect(loginUrl);
   }
 }

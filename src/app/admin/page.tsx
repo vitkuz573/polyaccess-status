@@ -4,9 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { getCurrentAdmin } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { overallStatus, statusLabel, uptimePercentage } from "@/lib/status";
+import { overallStatus, uptimePercentage } from "@/lib/status";
 import { ComponentStatus } from "@prisma/client";
 import { StatusDot } from "@/components/status/status-dot";
+import { EmptyState } from "@/components/ui/empty-state";
 import { formatDistanceToNow } from "date-fns";
 import {
   LayersIcon,
@@ -122,7 +123,7 @@ export default async function AdminDashboardPage() {
                 Overall system status
               </div>
               <div className="text-2xl font-semibold text-[var(--sp-text)]">
-                {overall.label === "No Components" ? "All systems operational" : statusLabel(overall.status)}
+                {overall.label === "No Components" ? "All systems operational" : overall.label}
               </div>
               {lastCheckedAt && (
                 <div className="mt-0.5 text-xs text-[var(--sp-text-tertiary)]">
@@ -148,10 +149,11 @@ export default async function AdminDashboardPage() {
         </div>
       </div>
 
+
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="status-glass border-[var(--sp-border)] bg-[#0b1021]">
+        <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-[var(--sp-text-tertiary)]">
+            <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--sp-text-tertiary)]">
               <LayersIcon className="h-4 w-4" />
               Components
             </CardTitle>
@@ -163,9 +165,9 @@ export default async function AdminDashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="status-glass border-[var(--sp-border)] bg-[#0b1021]">
+        <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-[var(--sp-text-tertiary)]">
+            <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--sp-text-tertiary)]">
               <AlertTriangleIcon className="h-4 w-4" />
               Active Incidents
             </CardTitle>
@@ -177,9 +179,9 @@ export default async function AdminDashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="status-glass border-[var(--sp-border)] bg-[#0b1021]">
+        <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-[var(--sp-text-tertiary)]">
+            <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--sp-text-tertiary)]">
               <WrenchIcon className="h-4 w-4" />
               Maintenance
             </CardTitle>
@@ -191,9 +193,9 @@ export default async function AdminDashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="status-glass border-[var(--sp-border)] bg-[#0b1021]">
+        <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-[var(--sp-text-tertiary)]">
+            <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--sp-text-tertiary)]">
               <UsersIcon className="h-4 w-4" />
               Subscribers
             </CardTitle>
@@ -207,7 +209,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <Card className="status-glass border-[var(--sp-border)] bg-[#0b1021] lg:col-span-2">
+        <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-[var(--sp-text)]">
               <ActivityIcon className="h-4 w-4 text-[var(--sp-emerald)]" />
@@ -219,22 +221,19 @@ export default async function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             {auditLogs.length === 0 ? (
-              <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--sp-border)] py-10 text-center">
-                <ClockIcon className="h-8 w-8 text-[var(--sp-text-tertiary)]" />
-                <p className="mt-3 text-sm text-[var(--sp-text-secondary)]">No recent activity</p>
-              </div>
+              <EmptyState icon={ClockIcon} title="No recent activity" description="Actions will appear here once activity is recorded." />
             ) : (
               <ul className="space-y-3">
                 {auditLogs.map((log) => (
                   <li
                     key={log.id}
-                    className="flex items-start gap-3 rounded-lg border border-[var(--sp-border)] bg-[rgba(255,255,255,0.02)] p-3"
+                    className="flex items-start gap-3 rounded-lg border border-[var(--sp-border)] bg-[rgba(255,255,255,0.02)] p-4"
                   >
-                    <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--sp-emerald-soft)]">
-                      <ShieldCheckIcon className="h-3.5 w-3.5 text-[var(--sp-emerald)]" />
+                    <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--sp-emerald-soft)]">
+                      <ShieldCheckIcon className="h-4 w-4 text-[var(--sp-emerald)]" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-[var(--sp-text)]">
+                      <p className="text-sm font-semibold text-[var(--sp-text)]">
                         {log.action.replace(/_/g, " ")}
                       </p>
                       <p className="text-xs text-[var(--sp-text-tertiary)]">
@@ -254,21 +253,21 @@ export default async function AdminDashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="status-glass border-[var(--sp-border)] bg-[#0b1021]">
+        <Card>
           <CardHeader>
             <CardTitle className="text-[var(--sp-text)]">Quick actions</CardTitle>
             <CardDescription className="text-[var(--sp-text-tertiary)]">
               Navigate to management pages
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-2">
+          <CardContent className="space-y-3">
             {quickLinks.map((item) => {
               const Icon = item.icon;
               return (
                 <Link key={item.href} href={item.href} className="block">
                   <Button
                     variant="ghost"
-                    className="h-auto w-full justify-between border border-[var(--sp-border)] bg-[rgba(255,255,255,0.02)] py-3 text-left text-[var(--sp-text)] hover:bg-[rgba(255,255,255,0.06)]"
+                    className="h-auto w-full justify-between border border-[var(--sp-border)] bg-[rgba(255,255,255,0.02)] p-4 text-left text-[var(--sp-text)] hover:bg-[rgba(255,255,255,0.06)]"
                   >
                     <span className="flex items-center gap-3">
                       <Icon className="h-4 w-4 text-[var(--sp-text-secondary)]" />

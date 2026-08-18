@@ -4,11 +4,8 @@ import { redirect } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import {
-  incidentImpactTheme,
-  incidentStatusLabel,
-} from "@/lib/status";
-import { StatusDot } from "@/components/status/status-dot";
+import { IncidentStatusBadge } from "@/components/ui/status-badge";
+import { EmptyState } from "@/components/ui/empty-state";
 import { formatDistanceToNow, format } from "date-fns";
 import {
   AlertTriangleIcon,
@@ -51,7 +48,7 @@ export default async function AdminIncidentsPage() {
         </p>
       </div>
 
-      <Card className="status-glass border-[var(--sp-border)] bg-[#0b1021]">
+      <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-[var(--sp-text)]">
             <AlertTriangleIcon className="h-5 w-5 text-[var(--sp-orange)]" />
@@ -63,31 +60,29 @@ export default async function AdminIncidentsPage() {
         </CardHeader>
         <CardContent>
           {active.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--sp-border)] py-12 text-center">
-              <CheckCircle2Icon className="h-10 w-10 text-[var(--sp-emerald)]" />
-              <p className="mt-4 text-sm font-medium text-[var(--sp-text)]">All clear</p>
-              <p className="mt-1 text-xs text-[var(--sp-text-tertiary)]">
-                No active incidents at the moment.
-              </p>
-            </div>
+            <EmptyState
+              icon={CheckCircle2Icon}
+              title="All clear"
+              description="No active incidents at the moment."
+              iconClassName="text-[var(--sp-emerald)]"
+            />
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="border-[var(--sp-border)] hover:bg-transparent">
-                    <TableHead className="text-[var(--sp-text-tertiary)]">Incident</TableHead>
-                    <TableHead className="text-[var(--sp-text-tertiary)]">Status</TableHead>
-                    <TableHead className="text-[var(--sp-text-tertiary)]">Impact</TableHead>
-                    <TableHead className="text-[var(--sp-text-tertiary)]">Started</TableHead>
-                    <TableHead className="text-[var(--sp-text-tertiary)]">Affected</TableHead>
-                    <TableHead className="text-[var(--sp-text-tertiary)]">Latest update</TableHead>
+                  <TableRow>
+                    <TableHead>Incident</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Impact</TableHead>
+                    <TableHead>Started</TableHead>
+                    <TableHead>Affected</TableHead>
+                    <TableHead>Latest update</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {active.map((i) => {
-                    const theme = incidentImpactTheme(i.impact);
                     return (
-                      <TableRow key={i.id} className="border-[var(--sp-border)]">
+                      <TableRow key={i.id}>
                         <TableCell>
                           <div className="font-medium text-[var(--sp-text)]">{i.title}</div>
                           {i.description && (
@@ -97,18 +92,10 @@ export default async function AdminIncidentsPage() {
                           )}
                         </TableCell>
                         <TableCell>
-                          <span
-                            className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${theme.bgSoft} ${theme.text} ${theme.border}`}
-                          >
-                            <StatusDot status={theme === incidentImpactTheme("none") ? "operational" : i.impact === "minor" ? "degraded" : i.impact === "major" ? "partial_outage" : "major_outage"} size="sm" />
-                            {incidentStatusLabel(i.status)}
-                          </span>
+                          <IncidentStatusBadge impact={i.impact} statusLabel={i.status} />
                         </TableCell>
                         <TableCell>
-                          <Badge
-                            variant="outline"
-                            className={`border-${theme.color.replace("bg-", "")} text-${theme.color.replace("bg-", "")}`}
-                          >
+                          <Badge variant="outline" className="text-[var(--sp-text-secondary)]">
                             {i.impact}
                           </Badge>
                         </TableCell>
@@ -119,11 +106,11 @@ export default async function AdminIncidentsPage() {
                           {i.components.length === 0 ? (
                             <span className="text-xs text-[var(--sp-text-tertiary)]">None</span>
                           ) : (
-                            <div className="flex flex-wrap gap-1">
+                            <div className="flex flex-wrap gap-1.5">
                               {i.components.map((c) => (
                                 <span
                                   key={c.componentId}
-                                  className="inline-flex items-center gap-1 rounded-md bg-[rgba(255,255,255,0.05)] px-2 py-1 text-xs text-[var(--sp-text-secondary)]"
+                                  className="inline-flex items-center gap-1.5 rounded-md border border-[var(--sp-border)] bg-[var(--sp-surface)] px-2.5 py-1 text-xs text-[var(--sp-text-secondary)]"
                                 >
                                   <ServerIcon className="h-3 w-3" />
                                   {c.component.name}
@@ -156,7 +143,7 @@ export default async function AdminIncidentsPage() {
         </CardContent>
       </Card>
 
-      <Card className="status-glass border-[var(--sp-border)] bg-[#0b1021]">
+      <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-[var(--sp-text)]">
             <ClockIcon className="h-5 w-5 text-[var(--sp-text-secondary)]" />
@@ -168,29 +155,27 @@ export default async function AdminIncidentsPage() {
         </CardHeader>
         <CardContent>
           {history.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--sp-border)] py-12 text-center">
-              <MessageSquareIcon className="h-10 w-10 text-[var(--sp-text-tertiary)]" />
-              <p className="mt-4 text-sm font-medium text-[var(--sp-text)]">No history</p>
-              <p className="mt-1 text-xs text-[var(--sp-text-tertiary)]">
-                Resolved incidents will appear here.
-              </p>
-            </div>
+            <EmptyState
+              icon={MessageSquareIcon}
+              title="No history"
+              description="Resolved incidents will appear here."
+            />
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="border-[var(--sp-border)] hover:bg-transparent">
-                    <TableHead className="text-[var(--sp-text-tertiary)]">Title</TableHead>
-                    <TableHead className="text-[var(--sp-text-tertiary)]">Impact</TableHead>
-                    <TableHead className="text-[var(--sp-text-tertiary)]">Resolved</TableHead>
-                    <TableHead className="text-[var(--sp-text-tertiary)]">Affected</TableHead>
-                    <TableHead className="text-[var(--sp-text-tertiary)]">Latest update</TableHead>
+                  <TableRow>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Impact</TableHead>
+                    <TableHead>Resolved</TableHead>
+                    <TableHead>Affected</TableHead>
+                    <TableHead>Latest update</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {history.map((i) => {
                     return (
-                      <TableRow key={i.id} className="border-[var(--sp-border)]">
+                      <TableRow key={i.id}>
                         <TableCell>
                           <div className="font-medium text-[var(--sp-text)]">{i.title}</div>
                         </TableCell>
@@ -206,11 +191,11 @@ export default async function AdminIncidentsPage() {
                           {i.components.length === 0 ? (
                             <span className="text-xs text-[var(--sp-text-tertiary)]">None</span>
                           ) : (
-                            <div className="flex flex-wrap gap-1">
+                            <div className="flex flex-wrap gap-1.5">
                               {i.components.map((c) => (
                                 <span
                                   key={c.componentId}
-                                  className="inline-flex items-center gap-1 rounded-md bg-[rgba(255,255,255,0.05)] px-2 py-1 text-xs text-[var(--sp-text-secondary)]"
+                                  className="inline-flex items-center gap-1.5 rounded-md border border-[var(--sp-border)] bg-[var(--sp-surface)] px-2.5 py-1 text-xs text-[var(--sp-text-secondary)]"
                                 >
                                   <ServerIcon className="h-3 w-3" />
                                   {c.component.name}

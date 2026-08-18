@@ -2,9 +2,9 @@ import { prisma } from "@/lib/db";
 import { getCurrentAdmin } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { maintenanceStatusTheme, maintenanceStatusLabel } from "@/lib/status";
+import { MaintenanceStatusBadge } from "@/components/ui/status-badge";
+import { EmptyState } from "@/components/ui/empty-state";
 import { format } from "date-fns";
 import {
   WrenchIcon,
@@ -38,7 +38,7 @@ export default async function AdminMaintenancePage() {
         </p>
       </div>
 
-      <Card className="status-glass border-[var(--sp-border)] bg-[#0b1021]">
+      <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-[var(--sp-text)]">
             <WrenchIcon className="h-5 w-5 text-[var(--sp-blue)]" />
@@ -50,32 +50,27 @@ export default async function AdminMaintenancePage() {
         </CardHeader>
         <CardContent>
           {upcoming.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--sp-border)] py-12 text-center">
-              <CalendarIcon className="h-10 w-10 text-[var(--sp-text-tertiary)]" />
-              <p className="mt-4 text-sm font-medium text-[var(--sp-text)]">
-                No scheduled maintenance
-              </p>
-              <p className="mt-1 text-xs text-[var(--sp-text-tertiary)]">
-                Maintenance windows will appear here once scheduled.
-              </p>
-            </div>
+            <EmptyState
+              icon={CalendarIcon}
+              title="No scheduled maintenance"
+              description="Maintenance windows will appear here once scheduled."
+            />
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="border-[var(--sp-border)] hover:bg-transparent">
-                    <TableHead className="text-[var(--sp-text-tertiary)]">Title</TableHead>
-                    <TableHead className="text-[var(--sp-text-tertiary)]">Status</TableHead>
-                    <TableHead className="text-[var(--sp-text-tertiary)]">Starts</TableHead>
-                    <TableHead className="text-[var(--sp-text-tertiary)]">Ends</TableHead>
-                    <TableHead className="text-[var(--sp-text-tertiary)]">Affected components</TableHead>
+                  <TableRow>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Starts</TableHead>
+                    <TableHead>Ends</TableHead>
+                    <TableHead>Affected components</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {upcoming.map((m) => {
-                    const theme = maintenanceStatusTheme(m.status);
                     return (
-                      <TableRow key={m.id} className="border-[var(--sp-border)]">
+                      <TableRow key={m.id}>
                         <TableCell>
                           <div className="font-medium text-[var(--sp-text)]">{m.title}</div>
                           {m.description && (
@@ -85,11 +80,7 @@ export default async function AdminMaintenancePage() {
                           )}
                         </TableCell>
                         <TableCell>
-                          <span
-                            className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${theme.bgSoft} ${theme.text} ${theme.border}`}
-                          >
-                            {maintenanceStatusLabel(m.status)}
-                          </span>
+                          <MaintenanceStatusBadge status={m.status} />
                         </TableCell>
                         <TableCell className="text-[var(--sp-text-secondary)]">
                           <div className="text-sm">{format(m.startsAt, "PP")}</div>
@@ -113,11 +104,11 @@ export default async function AdminMaintenancePage() {
                           {m.components.length === 0 ? (
                             <span className="text-xs text-[var(--sp-text-tertiary)]">None</span>
                           ) : (
-                            <div className="flex flex-wrap gap-1">
+                            <div className="flex flex-wrap gap-1.5">
                               {m.components.map((c) => (
                                 <span
                                   key={c.componentId}
-                                  className="inline-flex items-center gap-1 rounded-md bg-[rgba(255,255,255,0.05)] px-2 py-1 text-xs text-[var(--sp-text-secondary)]"
+                                  className="inline-flex items-center gap-1.5 rounded-md border border-[var(--sp-border)] bg-[var(--sp-surface)] px-2.5 py-1 text-xs text-[var(--sp-text-secondary)]"
                                 >
                                   <ServerIcon className="h-3 w-3" />
                                   {c.component.name}
@@ -136,7 +127,7 @@ export default async function AdminMaintenancePage() {
         </CardContent>
       </Card>
 
-      <Card className="status-glass border-[var(--sp-border)] bg-[#0b1021]">
+      <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-[var(--sp-text)]">
             <CheckCircle2Icon className="h-5 w-5 text-[var(--sp-emerald)]" />
@@ -148,39 +139,31 @@ export default async function AdminMaintenancePage() {
         </CardHeader>
         <CardContent>
           {completed.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--sp-border)] py-12 text-center">
-              <ClockIcon className="h-10 w-10 text-[var(--sp-text-tertiary)]" />
-              <p className="mt-4 text-sm font-medium text-[var(--sp-text)]">No history</p>
-              <p className="mt-1 text-xs text-[var(--sp-text-tertiary)]">
-                Completed maintenance windows will appear here.
-              </p>
-            </div>
+            <EmptyState
+              icon={ClockIcon}
+              title="No history"
+              description="Completed maintenance windows will appear here."
+            />
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="border-[var(--sp-border)] hover:bg-transparent">
-                    <TableHead className="text-[var(--sp-text-tertiary)]">Title</TableHead>
-                    <TableHead className="text-[var(--sp-text-tertiary)]">Status</TableHead>
-                    <TableHead className="text-[var(--sp-text-tertiary)]">Window</TableHead>
-                    <TableHead className="text-[var(--sp-text-tertiary)]">Affected components</TableHead>
+                  <TableRow>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Window</TableHead>
+                    <TableHead>Affected components</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {completed.map((m) => {
-                    const theme = maintenanceStatusTheme(m.status);
                     return (
-                      <TableRow key={m.id} className="border-[var(--sp-border)]">
+                      <TableRow key={m.id}>
                         <TableCell>
                           <div className="font-medium text-[var(--sp-text)]">{m.title}</div>
                         </TableCell>
                         <TableCell>
-                          <Badge
-                            variant="outline"
-                            className={`border-${theme.color.replace("bg-", "")} text-${theme.color.replace("bg-", "")}`}
-                          >
-                            {maintenanceStatusLabel(m.status)}
-                          </Badge>
+                          <MaintenanceStatusBadge status={m.status} />
                         </TableCell>
                         <TableCell className="text-[var(--sp-text-secondary)]">
                           <div className="text-sm">{format(m.startsAt, "PP")}</div>
@@ -194,11 +177,11 @@ export default async function AdminMaintenancePage() {
                           {m.components.length === 0 ? (
                             <span className="text-xs text-[var(--sp-text-tertiary)]">None</span>
                           ) : (
-                            <div className="flex flex-wrap gap-1">
+                            <div className="flex flex-wrap gap-1.5">
                               {m.components.map((c) => (
                                 <span
                                   key={c.componentId}
-                                  className="inline-flex items-center gap-1 rounded-md bg-[rgba(255,255,255,0.05)] px-2 py-1 text-xs text-[var(--sp-text-secondary)]"
+                                  className="inline-flex items-center gap-1.5 rounded-md border border-[var(--sp-border)] bg-[var(--sp-surface)] px-2.5 py-1 text-xs text-[var(--sp-text-secondary)]"
                                 >
                                   <ServerIcon className="h-3 w-3" />
                                   {c.component.name}
