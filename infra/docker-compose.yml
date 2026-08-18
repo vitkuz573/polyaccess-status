@@ -1,0 +1,72 @@
+version: "3.9"
+
+services:
+  status-db:
+    image: postgres:16-alpine
+    container_name: status-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: status
+    ports:
+      - "5435:5432"
+    volumes:
+      - status-db-data:/var/lib/postgresql/data
+    networks:
+      - polyaccess
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  status-redis:
+    image: redis:7-alpine
+    container_name: status-redis
+    restart: unless-stopped
+    ports:
+      - "6382:6379"
+    volumes:
+      - status-redis-data:/data
+    networks:
+      - polyaccess
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  status-app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: status-app
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:postgres@status-db:5432/status?schema=public
+      REDIS_URL: redis://status-redis:6379
+      KEY_SERVICE_URL: http://key-service:8000
+      CHALLENGE_PROXY_URL: http://challenge-proxy:8000
+      PORTAL_BASE_URL: http://portal:3000
+      APP_BASE_URL: http://status.localhost:3001
+      ADMIN_API_KEY: ${ADMIN_API_KEY:-pa_admin_change_me_in_production}
+      ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET:-change-me-in-production-access-token-secret-min-32-chars}
+    ports:
+      - "3001:3000"
+    networks:
+      - polyaccess
+    depends_on:
+      status-db:
+        condition: service_healthy
+      status-redis:
+        condition: service_healthy
+
+volumes:
+  status-db-data:
+  status-redis-data:
+
+networks:
+  polyaccess:
+    external: true

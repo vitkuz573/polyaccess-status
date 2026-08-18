@@ -1,0 +1,344 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Organization {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String
+  slug        String   @unique
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  statusPages StatusPage[]
+  users       StatusPageUser[]
+  auditLogs   AuditLog[]
+
+  @@map("organizations")
+}
+
+model StatusPage {
+  id           String  @id @default(uuid()) @db.Uuid
+  name         String
+  slug         String  @unique
+  description  String?
+  logoUrl      String? @map("logo_url")
+  customCss    String? @map("custom_css")
+  customDomain String? @unique @map("custom_domain")
+  isPublic     Boolean @default(true) @map("is_public")
+
+  organizationId String       @map("organization_id") @db.Uuid
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  groups       ComponentGroup[]
+  components   Component[]
+  incidents    Incident[]
+  maintenances Maintenance[]
+  subscribers  Subscriber[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([organizationId])
+  @@index([isPublic])
+  @@map("status_pages")
+}
+
+model ComponentGroup {
+  id          String  @id @default(uuid()) @db.Uuid
+  name        String
+  description String?
+  position    Int     @default(0)
+
+  statusPageId String     @map("status_page_id") @db.Uuid
+  statusPage   StatusPage @relation(fields: [statusPageId], references: [id], onDelete: Cascade)
+
+  components Component[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([statusPageId])
+  @@map("component_groups")
+}
+
+enum ComponentStatus {
+  operational
+  degraded
+  partial_outage
+  major_outage
+  maintenance
+
+  @@map("component_status")
+}
+
+model Component {
+  id          String          @id @default(uuid()) @db.Uuid
+  name        String
+  description String?
+  status      ComponentStatus @default(operational)
+  position    Int             @default(0)
+
+  statusPageId String     @map("status_page_id") @db.Uuid
+  statusPage   StatusPage @relation(fields: [statusPageId], references: [id], onDelete: Cascade)
+
+  groupId String?         @map("group_id") @db.Uuid
+  group   ComponentGroup? @relation(fields: [groupId], references: [id], onDelete: SetNull)
+
+  checks       Check[]
+  incidents    IncidentComponent[]
+  maintenances MaintenanceComponent[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([statusPageId])
+  @@index([statusPageId, status])
+  @@index([groupId])
+  @@map("components")
+}
+
+enum CheckType {
+  http
+  https
+  tcp
+  challenge_proxy_health
+
+  @@map("check_type")
+}
+
+model Check {
+  id       String    @id @default(uuid()) @db.Uuid
+  type     CheckType
+  target   String
+  interval Int       @default(60) // seconds
+  timeout  Int       @default(10) // seconds
+  enabled  Boolean   @default(true)
+  regions  String[]  @default([])
+
+  componentId String    @map("component_id") @db.Uuid
+  component   Component @relation(fields: [componentId], references: [id], onDelete: Cascade)
+
+  results CheckResult[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([componentId])
+  @@index([enabled])
+  @@map("checks")
+}
+
+model CheckResult {
+  id           String   @id @default(uuid()) @db.Uuid
+  status       String // up / down / degraded
+  responseTime Int?     @map("response_time_ms")
+  statusCode   Int?     @map("status_code")
+  message      String?
+  checkedAt    DateTime @map("checked_at")
+  region       String   @default("default")
+
+  checkId String @map("check_id") @db.Uuid
+  check   Check  @relation(fields: [checkId], references: [id], onDelete: Cascade)
+
+  @@index([checkId, checkedAt])
+  @@index([checkedAt])
+  @@map("check_results")
+}
+
+enum IncidentImpact {
+  none
+  minor
+  major
+  critical
+
+  @@map("incident_impact")
+}
+
+enum IncidentStatus {
+  investigating
+  identified
+  monitoring
+  resolved
+
+  @@map("incident_status")
+}
+
+model Incident {
+  id          String         @id @default(uuid()) @db.Uuid
+  title       String
+  description String?
+  impact      IncidentImpact @default(none)
+  status      IncidentStatus @default(investigating)
+  startedAt   DateTime       @default(now()) @map("started_at")
+  resolvedAt  DateTime?      @map("resolved_at")
+
+  statusPageId String     @map("status_page_id") @db.Uuid
+  statusPage   StatusPage @relation(fields: [statusPageId], references: [id], onDelete: Cascade)
+
+  updates    IncidentUpdate[]
+  components IncidentComponent[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([statusPageId, status])
+  @@index([statusPageId, startedAt])
+  @@index([resolvedAt])
+  @@map("incidents")
+}
+
+model IncidentUpdate {
+  id      String         @id @default(uuid()) @db.Uuid
+  message String
+  status  IncidentStatus
+
+  incidentId String   @map("incident_id") @db.Uuid
+  incident   Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([incidentId, createdAt])
+  @@map("incident_updates")
+}
+
+model IncidentComponent {
+  incidentId  String    @map("incident_id") @db.Uuid
+  componentId String    @map("component_id") @db.Uuid
+  incident    Incident  @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  component   Component @relation(fields: [componentId], references: [id], onDelete: Cascade)
+
+  @@id([incidentId, componentId])
+  @@map("incident_components")
+}
+
+enum MaintenanceStatus {
+  scheduled
+  in_progress
+  completed
+  cancelled
+
+  @@map("maintenance_status")
+}
+
+model Maintenance {
+  id          String            @id @default(uuid()) @db.Uuid
+  title       String
+  description String?
+  status      MaintenanceStatus @default(scheduled)
+  startsAt    DateTime          @map("starts_at")
+  endsAt      DateTime?         @map("ends_at")
+
+  statusPageId String     @map("status_page_id") @db.Uuid
+  statusPage   StatusPage @relation(fields: [statusPageId], references: [id], onDelete: Cascade)
+
+  components MaintenanceComponent[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([statusPageId, status])
+  @@index([startsAt])
+  @@map("maintenances")
+}
+
+model MaintenanceComponent {
+  maintenanceId String      @map("maintenance_id") @db.Uuid
+  componentId   String      @map("component_id") @db.Uuid
+  maintenance   Maintenance @relation(fields: [maintenanceId], references: [id], onDelete: Cascade)
+  component     Component   @relation(fields: [componentId], references: [id], onDelete: Cascade)
+
+  @@id([maintenanceId, componentId])
+  @@map("maintenance_components")
+}
+
+enum SubscriberChannel {
+  email
+  webhook
+  slack
+  discord
+
+  @@map("subscriber_channel")
+}
+
+model Subscriber {
+  id       String            @id @default(uuid()) @db.Uuid
+  channel  SubscriberChannel
+  target   String
+  active   Boolean           @default(true)
+  verified Boolean           @default(false)
+
+  statusPageId String     @map("status_page_id") @db.Uuid
+  statusPage   StatusPage @relation(fields: [statusPageId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([statusPageId, channel, target])
+  @@index([statusPageId, active])
+  @@map("subscribers")
+}
+
+enum StatusPageRole {
+  admin
+  editor
+  viewer
+
+  @@map("status_page_role")
+}
+
+model StatusPageUser {
+  id        String         @id @default(uuid()) @db.Uuid
+  email     String
+  keyUserId String?        @map("key_user_id")
+  role      StatusPageRole @default(viewer)
+
+  organizationId String       @map("organization_id") @db.Uuid
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([organizationId, email])
+  @@map("status_page_users")
+}
+
+enum AuditAction {
+  component_create
+  component_update
+  component_delete
+  incident_create
+  incident_update
+  incident_resolve
+  maintenance_create
+  maintenance_update
+  maintenance_cancel
+  subscriber_create
+  subscriber_delete
+  page_update
+
+  @@map("audit_action")
+}
+
+model AuditLog {
+  id         String      @id @default(uuid()) @db.Uuid
+  action     AuditAction
+  entity     String
+  entityId   String?     @map("entity_id") @db.Uuid
+  metadata   Json?       @default("{}")
+  actorEmail String?     @map("actor_email")
+
+  organizationId String       @map("organization_id") @db.Uuid
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([organizationId, createdAt])
+  @@map("audit_logs")
+}
