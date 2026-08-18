@@ -25,6 +25,8 @@ import {
   LayersIcon,
   AlertTriangleIcon,
   WrenchIcon,
+  FileTextIcon,
+  ExternalLinkIcon,
   MenuIcon,
   ActivityIcon,
   LogOutIcon,
@@ -32,6 +34,7 @@ import {
 
 const links = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboardIcon },
+  { href: "/admin/status-pages", label: "Status pages", icon: FileTextIcon },
   { href: "/admin/components", label: "Components", icon: LayersIcon },
   { href: "/admin/incidents", label: "Incidents", icon: AlertTriangleIcon },
   { href: "/admin/maintenance", label: "Maintenance", icon: WrenchIcon },
@@ -77,6 +80,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             </div>
           );
         })}
+        <Link href="/polyaccess" target="_blank" rel="noopener noreferrer" className="block">
+          <Button variant="ghost" className="w-full justify-start gap-3">
+            <ExternalLinkIcon className="h-4 w-4" />
+            View public page
+          </Button>
+        </Link>
       </nav>
 
       <div className="shrink-0 border-t p-4">
@@ -148,6 +157,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
+                  <Link href="/admin/status-pages" className="cursor-pointer">
+                    <FileTextIcon className="mr-2 h-4 w-4" />
+                    Status pages
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Link href="/admin/components" className="cursor-pointer">
                     <LayersIcon className="mr-2 h-4 w-4" />
                     Components
@@ -166,6 +181,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/polyaccess" target="_blank" rel="noopener noreferrer" className="cursor-pointer">
+                    <ExternalLinkIcon className="mr-2 h-4 w-4" />
+                    View public page
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem className="text-destructive focus:text-destructive" asChild>
                   <LogoutButton variant="ghost" className="w-full justify-start">
                     <LogOutIcon className="mr-2 h-4 w-4" />
