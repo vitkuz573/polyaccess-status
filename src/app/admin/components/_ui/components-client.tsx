@@ -163,18 +163,15 @@ export function ComponentsClient({ initialComponents, groups }: ComponentsClient
     <div className="space-y-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-[var(--sp-text)]">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
             Components
           </h1>
-          <p className="text-sm text-[var(--sp-text-secondary)]">
+          <p className="text-sm text-muted-foreground">
             Monitor and manage your services
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Button
-            onClick={handleCreateClick}
-            className="gap-2 bg-[var(--sp-emerald)] text-[#020617] hover:bg-[var(--sp-emerald)]/90"
-          >
+          <Button onClick={handleCreateClick} className="gap-2">
             <PlusIcon className="h-4 w-4" />
             New component
           </Button>
@@ -185,13 +182,13 @@ export function ComponentsClient({ initialComponents, groups }: ComponentsClient
       <div className="grid gap-4 sm:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--sp-text-tertiary)]">
+            <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               <ServerIcon className="h-4 w-4" />
               Total components
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-semibold text-[var(--sp-text)]">
+            <div className="text-3xl font-semibold text-foreground">
               {components.length}
             </div>
           </CardContent>
@@ -199,13 +196,13 @@ export function ComponentsClient({ initialComponents, groups }: ComponentsClient
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--sp-text-tertiary)]">
+            <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               <ActivityIcon className="h-4 w-4" />
               Total checks run
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-semibold text-[var(--sp-text)]">
+            <div className="text-3xl font-semibold text-foreground">
               {totalChecks}
             </div>
           </CardContent>
@@ -213,13 +210,13 @@ export function ComponentsClient({ initialComponents, groups }: ComponentsClient
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--sp-text-tertiary)]">
+            <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               <CheckCircle2Icon className="h-4 w-4" />
               Operational
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-semibold text-[var(--sp-text)]">
+            <div className="text-3xl font-semibold text-foreground">
               {components.filter((c) => c.status === "operational").length}
             </div>
           </CardContent>
@@ -240,8 +237,8 @@ export function ComponentsClient({ initialComponents, groups }: ComponentsClient
         Object.entries(grouped).map(([groupName, items]) => (
           <Card key={groupName}>
             <CardHeader>
-              <CardTitle className="text-[var(--sp-text)]">{groupName}</CardTitle>
-              <CardDescription className="text-[var(--sp-text-tertiary)]">
+              <CardTitle className="text-foreground">{groupName}</CardTitle>
+              <CardDescription>
                 {items.length} component{items.length === 1 ? "" : "s"}
               </CardDescription>
             </CardHeader>
@@ -267,11 +264,11 @@ export function ComponentsClient({ initialComponents, groups }: ComponentsClient
                       return (
                         <TableRow key={c.id}>
                           <TableCell>
-                            <div className="font-medium text-[var(--sp-text)]">
+                            <div className="font-medium text-foreground">
                               {c.name}
                             </div>
                             {c.description && (
-                              <div className="text-xs text-[var(--sp-text-tertiary)]">
+                              <div className="text-xs text-muted-foreground">
                                 {c.description}
                               </div>
                             )}
@@ -279,14 +276,14 @@ export function ComponentsClient({ initialComponents, groups }: ComponentsClient
                           <TableCell>
                             <ComponentStatusBadge status={c.status} />
                           </TableCell>
-                          <TableCell className="tabular-nums text-[var(--sp-text)]">
+                          <TableCell className="tabular-nums text-foreground">
                             {uptime.toFixed(2)}%
                           </TableCell>
-                          <TableCell className="text-[var(--sp-text-secondary)]">
+                          <TableCell className="text-muted-foreground">
                             {latestResult ? (
                               formatDistanceToNow(latestResult.checkedAt) + " ago"
                             ) : (
-                              <span className="text-[var(--sp-text-tertiary)]">
+                              <span className="text-muted-foreground">
                                 Never
                               </span>
                             )}
@@ -298,18 +295,17 @@ export function ComponentsClient({ initialComponents, groups }: ComponentsClient
                             <div className="flex items-center gap-2">
                               <Button
                                 variant="ghost"
-                                size="icon"
+                                size="icon-sm"
                                 onClick={() => handleEditClick(c)}
-                                className="h-8 w-8 text-[var(--sp-text-secondary)] hover:bg-[var(--sp-surface-hover)] hover:text-[var(--sp-text)]"
                                 title="Edit component"
                               >
                                 <PencilIcon className="h-4 w-4" />
                               </Button>
                               <Button
                                 variant="ghost"
-                                size="icon"
+                                size="icon-sm"
                                 onClick={() => handleDeleteClick(c)}
-                                className="h-8 w-8 text-[var(--sp-text-secondary)] hover:bg-[var(--sp-red-soft)] hover:text-[var(--sp-red)]"
+                                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
                                 title="Delete component"
                               >
                                 <TrashIcon className="h-4 w-4" />

@@ -35,10 +35,10 @@ export function ComponentModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto border-[var(--sp-border-strong)] bg-[#0b1021] p-0 text-[var(--sp-text)]">
-        <DialogHeader className="sticky top-0 z-10 border-b border-[var(--sp-border)] bg-[#0b1021] p-6">
-          <DialogTitle className="text-[var(--sp-text)]">{title}</DialogTitle>
-          <DialogDescription className="text-[var(--sp-text-secondary)]">
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto p-0">
+        <DialogHeader className="sticky top-0 z-10 border-b bg-card p-6">
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>
             {description}
           </DialogDescription>
         </DialogHeader>

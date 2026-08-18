@@ -105,28 +105,28 @@ export default async function AdminDashboardPage() {
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold tracking-tight text-[var(--sp-text)]">Dashboard</h1>
-        <p className="text-sm text-[var(--sp-text-secondary)]">
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Dashboard</h1>
+        <p className="text-sm text-muted-foreground">
           Overview of {statusPage?.name ?? "your status page"}
         </p>
       </div>
 
       <div
-        className={`status-glass-strong relative overflow-hidden rounded-2xl border border-[var(--sp-border-strong)] p-6 sm:p-8 ${statusGlow[overall.status]}`}
+        className={`relative overflow-hidden rounded-2xl border bg-card/50 p-6 sm:p-8 ${statusGlow[overall.status]}`}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-white/[0.04] to-transparent" />
         <div className="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             <StatusDot status={overall.status} size="lg" pulse />
             <div>
-              <div className="text-sm font-medium text-[var(--sp-text-secondary)]">
+              <div className="text-sm font-medium text-muted-foreground">
                 Overall system status
               </div>
-              <div className="text-2xl font-semibold text-[var(--sp-text)]">
+              <div className="text-2xl font-semibold text-foreground">
                 {overall.label === "No Components" ? "All systems operational" : overall.label}
               </div>
               {lastCheckedAt && (
-                <div className="mt-0.5 text-xs text-[var(--sp-text-tertiary)]">
+                <div className="mt-0.5 text-xs text-muted-foreground">
                   Last check {formatDistanceToNow(lastCheckedAt)} ago
                 </div>
               )}
@@ -134,32 +134,31 @@ export default async function AdminDashboardPage() {
           </div>
           <div className="flex items-center gap-6">
             <div className="text-center">
-              <div className="text-xl font-semibold tabular-nums text-[var(--sp-text)]">
+              <div className="text-xl font-semibold tabular-nums text-foreground">
                 {overallUptime.toFixed(2)}%
               </div>
-              <div className="text-xs text-[var(--sp-text-tertiary)]">Uptime</div>
+              <div className="text-xs text-muted-foreground">Uptime</div>
             </div>
             <div className="text-center">
-              <div className="text-xl font-semibold tabular-nums text-[var(--sp-text)]">
+              <div className="text-xl font-semibold tabular-nums text-foreground">
                 {components}
               </div>
-              <div className="text-xs text-[var(--sp-text-tertiary)]">Components</div>
+              <div className="text-xs text-muted-foreground">Components</div>
             </div>
           </div>
         </div>
       </div>
 
-
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--sp-text-tertiary)]">
+            <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               <LayersIcon className="h-4 w-4" />
               Components
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-semibold tabular-nums text-[var(--sp-text)]">
+            <div className="text-3xl font-semibold tabular-nums text-foreground">
               {components}
             </div>
           </CardContent>
@@ -167,13 +166,13 @@ export default async function AdminDashboardPage() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--sp-text-tertiary)]">
+            <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               <AlertTriangleIcon className="h-4 w-4" />
               Active Incidents
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-semibold tabular-nums text-[var(--sp-text)]">
+            <div className="text-3xl font-semibold tabular-nums text-foreground">
               {activeIncidents}
             </div>
           </CardContent>
@@ -181,13 +180,13 @@ export default async function AdminDashboardPage() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--sp-text-tertiary)]">
+            <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               <WrenchIcon className="h-4 w-4" />
               Maintenance
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-semibold tabular-nums text-[var(--sp-text)]">
+            <div className="text-3xl font-semibold tabular-nums text-foreground">
               {scheduledMaintenance}
             </div>
           </CardContent>
@@ -195,13 +194,13 @@ export default async function AdminDashboardPage() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--sp-text-tertiary)]">
+            <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               <UsersIcon className="h-4 w-4" />
               Subscribers
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-semibold tabular-nums text-[var(--sp-text)]">
+            <div className="text-3xl font-semibold tabular-nums text-foreground">
               {subscribers}
             </div>
           </CardContent>
@@ -211,11 +210,11 @@ export default async function AdminDashboardPage() {
       <div className="grid gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-[var(--sp-text)]">
-              <ActivityIcon className="h-4 w-4 text-[var(--sp-emerald)]" />
+            <CardTitle className="flex items-center gap-2 text-foreground">
+              <ActivityIcon className="h-4 w-4 text-primary" />
               Recent activity
             </CardTitle>
-            <CardDescription className="text-[var(--sp-text-tertiary)]">
+            <CardDescription>
               Latest actions across your status page
             </CardDescription>
           </CardHeader>
@@ -227,23 +226,23 @@ export default async function AdminDashboardPage() {
                 {auditLogs.map((log) => (
                   <li
                     key={log.id}
-                    className="flex items-start gap-3 rounded-lg border border-[var(--sp-border)] bg-[rgba(255,255,255,0.02)] p-4"
+                    className="flex items-start gap-3 rounded-lg border bg-muted/30 p-4"
                   >
-                    <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--sp-emerald-soft)]">
-                      <ShieldCheckIcon className="h-4 w-4 text-[var(--sp-emerald)]" />
+                    <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                      <ShieldCheckIcon className="h-4 w-4 text-primary" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-[var(--sp-text)]">
+                      <p className="text-sm font-semibold text-foreground">
                         {log.action.replace(/_/g, " ")}
                       </p>
-                      <p className="text-xs text-[var(--sp-text-tertiary)]">
+                      <p className="text-xs text-muted-foreground">
                         {log.entity}
                         {log.actorEmail && (
                           <span className="ml-1">by {log.actorEmail}</span>
                         )}
                       </p>
                     </div>
-                    <span className="shrink-0 text-xs text-[var(--sp-text-tertiary)]">
+                    <span className="shrink-0 text-xs text-muted-foreground">
                       {formatDistanceToNow(log.createdAt)} ago
                     </span>
                   </li>
@@ -255,8 +254,8 @@ export default async function AdminDashboardPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-[var(--sp-text)]">Quick actions</CardTitle>
-            <CardDescription className="text-[var(--sp-text-tertiary)]">
+            <CardTitle className="text-foreground">Quick actions</CardTitle>
+            <CardDescription>
               Navigate to management pages
             </CardDescription>
           </CardHeader>
@@ -267,18 +266,18 @@ export default async function AdminDashboardPage() {
                 <Link key={item.href} href={item.href} className="block">
                   <Button
                     variant="ghost"
-                    className="h-auto w-full justify-between border border-[var(--sp-border)] bg-[rgba(255,255,255,0.02)] p-4 text-left text-[var(--sp-text)] hover:bg-[rgba(255,255,255,0.06)]"
+                    className="h-auto w-full justify-between border bg-muted/30 p-4 text-left"
                   >
                     <span className="flex items-center gap-3">
-                      <Icon className="h-4 w-4 text-[var(--sp-text-secondary)]" />
+                      <Icon className="h-4 w-4 text-muted-foreground" />
                       <span className="flex flex-col">
                         <span className="text-sm font-medium">{item.label}</span>
-                        <span className="text-xs font-normal text-[var(--sp-text-tertiary)]">
+                        <span className="text-xs font-normal text-muted-foreground">
                           {item.description}
                         </span>
                       </span>
                     </span>
-                    <ArrowRightIcon className="h-4 w-4 text-[var(--sp-text-tertiary)]" />
+                    <ArrowRightIcon className="h-4 w-4 text-muted-foreground" />
                   </Button>
                 </Link>
               );

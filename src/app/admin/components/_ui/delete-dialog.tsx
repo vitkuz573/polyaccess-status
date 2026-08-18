@@ -30,17 +30,15 @@ export function DeleteDialog({
 }: DeleteDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md border-[var(--sp-border-strong)] bg-[#0b1021] text-[var(--sp-text)]">
+      <DialogContent className="max-w-md">
         <DialogHeader>
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--sp-red-soft)]">
-              <AlertTriangleIcon className="h-5 w-5 text-[var(--sp-red)]" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10">
+              <AlertTriangleIcon className="h-5 w-5 text-destructive" />
             </div>
             <div>
-              <DialogTitle className="text-[var(--sp-text)]">{title}</DialogTitle>
-              <DialogDescription className="text-[var(--sp-text-secondary)]">
-                {description}
-              </DialogDescription>
+              <DialogTitle>{title}</DialogTitle>
+              <DialogDescription>{description}</DialogDescription>
             </div>
           </div>
         </DialogHeader>
@@ -49,7 +47,6 @@ export function DeleteDialog({
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={isDeleting}
-            className="border-[var(--sp-border-strong)] text-[var(--sp-text)] hover:bg-[var(--sp-surface-hover)]"
           >
             Cancel
           </Button>
@@ -57,7 +54,6 @@ export function DeleteDialog({
             variant="destructive"
             onClick={onConfirm}
             disabled={isDeleting}
-            className="bg-[var(--sp-red)] text-white hover:bg-[var(--sp-red)]/90"
           >
             {isDeleting ? (
               <>

@@ -158,7 +158,7 @@ export function ComponentForm({
             {...register("name")}
           />
           {errors.name && (
-            <p className="text-xs text-[var(--sp-red)]">{errors.name.message}</p>
+            <p className="text-xs text-destructive">{errors.name.message}</p>
           )}
         </div>
 
@@ -167,12 +167,12 @@ export function ComponentForm({
           <Textarea
             id="description"
             placeholder="Brief description of this service"
-            className="min-h-[80px] border-[var(--sp-border)] bg-[rgba(255,255,255,0.03)] px-3 py-2 text-sm text-[var(--sp-text)] placeholder:text-[var(--sp-text-tertiary)]"
+            className="min-h-[80px]"
             disabled={isSubmitting}
             {...register("description")}
           />
           {errors.description && (
-            <p className="text-xs text-[var(--sp-red)]">
+            <p className="text-xs text-destructive">
               {errors.description.message}
             </p>
           )}
@@ -192,13 +192,10 @@ export function ComponentForm({
             }}
             disabled={isSubmitting}
           >
-            <SelectTrigger
-              id="groupId"
-              className="w-full border-[var(--sp-border)] bg-[rgba(255,255,255,0.03)] text-[var(--sp-text)]"
-            >
+            <SelectTrigger id="groupId">
               <SelectValue placeholder="Select a group" />
             </SelectTrigger>
-            <SelectContent className="bg-[#0b1021] text-[var(--sp-text)] ring-1 ring-[var(--sp-border-strong)]">
+            <SelectContent>
               <SelectItem value="__none__">Ungrouped</SelectItem>
               <SelectItem value="__new__">+ Create new group</SelectItem>
               {groups.map((group) => (
@@ -209,7 +206,7 @@ export function ComponentForm({
             </SelectContent>
           </Select>
           {errors.groupId && (
-            <p className="text-xs text-[var(--sp-red)]">{errors.groupId.message}</p>
+            <p className="text-xs text-destructive">{errors.groupId.message}</p>
           )}
         </div>
 
@@ -223,7 +220,7 @@ export function ComponentForm({
               {...register("newGroupName")}
             />
             {errors.newGroupName && (
-              <p className="text-xs text-[var(--sp-red)]">
+              <p className="text-xs text-destructive">
                 {errors.newGroupName.message}
               </p>
             )}
@@ -239,7 +236,7 @@ export function ComponentForm({
             {...register("position")}
           />
           {errors.position && (
-            <p className="text-xs text-[var(--sp-red)]">
+            <p className="text-xs text-destructive">
               {errors.position.message}
             </p>
           )}
@@ -258,13 +255,10 @@ export function ComponentForm({
             }
             disabled={isSubmitting}
           >
-            <SelectTrigger
-              id="statusOverride"
-              className="w-full border-[var(--sp-border)] bg-[rgba(255,255,255,0.03)] text-[var(--sp-text)]"
-            >
+            <SelectTrigger id="statusOverride">
               <SelectValue placeholder="Auto (from checks)" />
             </SelectTrigger>
-            <SelectContent className="bg-[#0b1021] text-[var(--sp-text)] ring-1 ring-[var(--sp-border-strong)]">
+            <SelectContent>
               <SelectItem value="__auto__">Auto (from checks)</SelectItem>
               {statusOptions.map((opt) => (
                 <SelectItem key={opt.value} value={opt.value}>
@@ -274,7 +268,7 @@ export function ComponentForm({
             </SelectContent>
           </Select>
           {errors.statusOverride && (
-            <p className="text-xs text-[var(--sp-red)]">
+            <p className="text-xs text-destructive">
               {errors.statusOverride.message}
             </p>
           )}
@@ -295,7 +289,7 @@ export function ComponentForm({
         </div>
       </div>
 
-      <Separator className="bg-[var(--sp-border)]" />
+      <Separator />
 
       <div className="space-y-4">
         <div className="flex items-center justify-between">
@@ -308,7 +302,7 @@ export function ComponentForm({
             size="sm"
             onClick={() => append(defaultCheck())}
             disabled={isSubmitting}
-            className="gap-1 border-[var(--sp-border)] text-[var(--sp-text)] hover:bg-[var(--sp-surface-hover)]"
+            className="gap-1"
           >
             <PlusIcon className="h-4 w-4" />
             Add check
@@ -316,7 +310,7 @@ export function ComponentForm({
         </div>
 
         {errors.checks?.root && (
-          <div className="flex items-center gap-2 rounded-lg bg-[var(--sp-red-soft)] p-3 text-sm text-[var(--sp-red)] ring-1 ring-[var(--sp-red)]/20">
+          <div className="flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive ring-1 ring-destructive/20">
             <AlertCircleIcon className="h-4 w-4 shrink-0" />
             {errors.checks.root.message}
           </div>
@@ -330,12 +324,12 @@ export function ComponentForm({
             return (
               <div
                 key={field.id}
-                className="rounded-xl border border-[var(--sp-border)] bg-[rgba(255,255,255,0.02)] p-4"
+                className="rounded-xl border bg-muted/30 p-4"
               >
                 <div className="mb-4 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <ServerIcon className="h-4 w-4 text-[var(--sp-text-tertiary)]" />
-                    <span className="text-sm font-medium text-[var(--sp-text)]">
+                    <ServerIcon className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium text-foreground">
                       Check {index + 1}
                     </span>
                   </div>
@@ -346,7 +340,7 @@ export function ComponentForm({
                       size="sm"
                       onClick={() => remove(index)}
                       disabled={isSubmitting}
-                      className="h-8 gap-1 text-[var(--sp-red)] hover:bg-[var(--sp-red-soft)]"
+                      className="h-8 gap-1 text-destructive hover:bg-destructive/10"
                     >
                       <TrashIcon className="h-4 w-4" />
                       Remove
@@ -364,7 +358,7 @@ export function ComponentForm({
                       {...register(`checks.${index}.name`)}
                     />
                     {checkErrors?.name && (
-                      <p className="text-xs text-[var(--sp-red)]">
+                      <p className="text-xs text-destructive">
                         {checkErrors.name.message}
                       </p>
                     )}
@@ -383,13 +377,10 @@ export function ComponentForm({
                       }
                       disabled={isSubmitting}
                     >
-                      <SelectTrigger
-                        id={`checks.${index}.type`}
-                        className="w-full border-[var(--sp-border)] bg-[rgba(255,255,255,0.03)] text-[var(--sp-text)]"
-                      >
+                      <SelectTrigger id={`checks.${index}.type`}>
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-[#0b1021] text-[var(--sp-text)] ring-1 ring-[var(--sp-border-strong)]">
+                      <SelectContent>
                         {checkTypeOptions.map((opt) => (
                           <SelectItem key={opt.value} value={opt.value}>
                             {opt.label}
@@ -398,7 +389,7 @@ export function ComponentForm({
                       </SelectContent>
                     </Select>
                     {checkErrors?.type && (
-                      <p className="text-xs text-[var(--sp-red)]">
+                      <p className="text-xs text-destructive">
                         {checkErrors.type.message}
                       </p>
                     )}
@@ -415,7 +406,7 @@ export function ComponentForm({
                       {...register(`checks.${index}.target`)}
                     />
                     {checkErrors?.target && (
-                      <p className="text-xs text-[var(--sp-red)]">
+                      <p className="text-xs text-destructive">
                         {checkErrors.target.message}
                       </p>
                     )}
@@ -432,11 +423,11 @@ export function ComponentForm({
                         disabled={isSubmitting}
                         {...register(`checks.${index}.timeout`)}
                       />
-                      {checkErrors?.timeout && (
-                        <p className="text-xs text-[var(--sp-red)]">
-                          {checkErrors.timeout.message}
-                        </p>
-                      )}
+                        {checkErrors?.timeout && (
+                          <p className="text-xs text-destructive">
+                            {checkErrors.timeout.message}
+                          </p>
+                        )}
                     </div>
 
                     <div className="space-y-2">
@@ -449,11 +440,11 @@ export function ComponentForm({
                         disabled={isSubmitting}
                         {...register(`checks.${index}.interval`)}
                       />
-                      {checkErrors?.interval && (
-                        <p className="text-xs text-[var(--sp-red)]">
-                          {checkErrors.interval.message}
-                        </p>
-                      )}
+                        {checkErrors?.interval && (
+                          <p className="text-xs text-destructive">
+                            {checkErrors.interval.message}
+                          </p>
+                        )}
                     </div>
                   </div>
 
@@ -471,7 +462,7 @@ export function ComponentForm({
                           {...register(`checks.${index}.expectedStatus`)}
                         />
                         {checkErrors?.expectedStatus && (
-                          <p className="text-xs text-[var(--sp-red)]">
+                          <p className="text-xs text-destructive">
                             {checkErrors.expectedStatus.message}
                           </p>
                         )}
@@ -490,13 +481,10 @@ export function ComponentForm({
                           }
                           disabled={isSubmitting}
                         >
-                          <SelectTrigger
-                            id={`checks.${index}.method`}
-                            className="w-full border-[var(--sp-border)] bg-[rgba(255,255,255,0.03)] text-[var(--sp-text)]"
-                          >
+                          <SelectTrigger id={`checks.${index}.method`}>
                             <SelectValue />
                           </SelectTrigger>
-                          <SelectContent className="bg-[#0b1021] text-[var(--sp-text)] ring-1 ring-[var(--sp-border-strong)]">
+                          <SelectContent>
                             {methodOptions.map((opt) => (
                               <SelectItem key={opt} value={opt}>
                                 {opt}
@@ -505,7 +493,7 @@ export function ComponentForm({
                           </SelectContent>
                         </Select>
                         {checkErrors?.method && (
-                          <p className="text-xs text-[var(--sp-red)]">
+                          <p className="text-xs text-destructive">
                             {checkErrors.method.message}
                           </p>
                         )}
@@ -518,12 +506,12 @@ export function ComponentForm({
                         <Textarea
                           id={`checks.${index}.headers`}
                           placeholder='{"Authorization":"Bearer token"}'
-                          className="min-h-[80px] border-[var(--sp-border)] bg-[rgba(255,255,255,0.03)] px-3 py-2 text-sm text-[var(--sp-text)] placeholder:text-[var(--sp-text-tertiary)]"
+                          className="min-h-[80px]"
                           disabled={isSubmitting}
                           {...register(`checks.${index}.headers`)}
                         />
                         {checkErrors?.headers && (
-                          <p className="text-xs text-[var(--sp-red)]">
+                          <p className="text-xs text-destructive">
                             {checkErrors.headers.message}
                           </p>
                         )}
@@ -562,14 +550,12 @@ export function ComponentForm({
           variant="outline"
           onClick={onCancel}
           disabled={isSubmitting}
-          className="border-[var(--sp-border-strong)] text-[var(--sp-text)] hover:bg-[var(--sp-surface-hover)]"
         >
           Cancel
         </Button>
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="bg-[var(--sp-emerald)] text-[#020617] hover:bg-[var(--sp-emerald)]/90"
         >
           {isSubmitting ? (
             <>

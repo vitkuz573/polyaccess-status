@@ -10,7 +10,7 @@ export function LogoutButton({
   className,
   children,
 }: {
-  variant?: "ghost" | "outline";
+  variant?: "ghost" | "outline" | "default";
   className?: string;
   children: React.ReactNode;
 }) {

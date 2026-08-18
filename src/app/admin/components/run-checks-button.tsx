@@ -29,7 +29,7 @@ export function RunChecksButton() {
     <Button
       onClick={handleClick}
       disabled={loading}
-      className="gap-2 bg-[var(--sp-emerald)] text-[#020617] hover:bg-[var(--sp-emerald)]/90"
+      className="gap-2"
     >
       {loading ? (
         <Loader2Icon className="h-4 w-4 animate-spin" />

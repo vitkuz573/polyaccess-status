@@ -42,19 +42,19 @@ export default async function AdminIncidentsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-[var(--sp-text)]">Incidents</h1>
-        <p className="text-sm text-[var(--sp-text-secondary)]">
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Incidents</h1>
+        <p className="text-sm text-muted-foreground">
           Active issues and resolved incident history
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-[var(--sp-text)]">
-            <AlertTriangleIcon className="h-5 w-5 text-[var(--sp-orange)]" />
+          <CardTitle className="flex items-center gap-2 text-foreground">
+            <AlertTriangleIcon className="h-5 w-5 text-orange-400" />
             Active incidents
           </CardTitle>
-          <CardDescription className="text-[var(--sp-text-tertiary)]">
+          <CardDescription>
             Ongoing issues that require attention
           </CardDescription>
         </CardHeader>
@@ -64,7 +64,7 @@ export default async function AdminIncidentsPage() {
               icon={CheckCircle2Icon}
               title="All clear"
               description="No active incidents at the moment."
-              iconClassName="text-[var(--sp-emerald)]"
+              iconClassName="text-emerald-400"
             />
           ) : (
             <div className="overflow-x-auto">
@@ -84,9 +84,9 @@ export default async function AdminIncidentsPage() {
                     return (
                       <TableRow key={i.id}>
                         <TableCell>
-                          <div className="font-medium text-[var(--sp-text)]">{i.title}</div>
+                          <div className="font-medium text-foreground">{i.title}</div>
                           {i.description && (
-                            <div className="max-w-xs truncate text-xs text-[var(--sp-text-tertiary)]">
+                            <div className="max-w-xs truncate text-xs text-muted-foreground">
                               {i.description}
                             </div>
                           )}
@@ -95,26 +95,21 @@ export default async function AdminIncidentsPage() {
                           <IncidentStatusBadge impact={i.impact} statusLabel={i.status} />
                         </TableCell>
                         <TableCell>
-                          <Badge variant="outline" className="text-[var(--sp-text-secondary)]">
-                            {i.impact}
-                          </Badge>
+                          <Badge variant="outline">{i.impact}</Badge>
                         </TableCell>
-                        <TableCell className="text-[var(--sp-text-secondary)]">
+                        <TableCell className="text-muted-foreground">
                           {formatDistanceToNow(i.startedAt)} ago
                         </TableCell>
                         <TableCell>
                           {i.components.length === 0 ? (
-                            <span className="text-xs text-[var(--sp-text-tertiary)]">None</span>
+                            <span className="text-xs text-muted-foreground">None</span>
                           ) : (
                             <div className="flex flex-wrap gap-1.5">
                               {i.components.map((c) => (
-                                <span
-                                  key={c.componentId}
-                                  className="inline-flex items-center gap-1.5 rounded-md border border-[var(--sp-border)] bg-[var(--sp-surface)] px-2.5 py-1 text-xs text-[var(--sp-text-secondary)]"
-                                >
+                                <Badge key={c.componentId} variant="secondary" className="gap-1">
                                   <ServerIcon className="h-3 w-3" />
                                   {c.component.name}
-                                </span>
+                                </Badge>
                               ))}
                             </div>
                           )}
@@ -122,15 +117,15 @@ export default async function AdminIncidentsPage() {
                         <TableCell>
                           {i.updates[0] ? (
                             <div className="max-w-xs">
-                              <p className="truncate text-sm text-[var(--sp-text)]">
+                              <p className="truncate text-sm text-foreground">
                                 {i.updates[0].message}
                               </p>
-                              <p className="text-xs text-[var(--sp-text-tertiary)]">
+                              <p className="text-xs text-muted-foreground">
                                 {formatDistanceToNow(i.updates[0].createdAt)} ago
                               </p>
                             </div>
                           ) : (
-                            <span className="text-xs text-[var(--sp-text-tertiary)]">No updates</span>
+                            <span className="text-xs text-muted-foreground">No updates</span>
                           )}
                         </TableCell>
                       </TableRow>
@@ -145,11 +140,11 @@ export default async function AdminIncidentsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-[var(--sp-text)]">
-            <ClockIcon className="h-5 w-5 text-[var(--sp-text-secondary)]" />
+          <CardTitle className="flex items-center gap-2 text-foreground">
+            <ClockIcon className="h-5 w-5 text-muted-foreground" />
             Incident history
           </CardTitle>
-          <CardDescription className="text-[var(--sp-text-tertiary)]">
+          <CardDescription>
             Recently resolved incidents
           </CardDescription>
         </CardHeader>
@@ -177,29 +172,24 @@ export default async function AdminIncidentsPage() {
                     return (
                       <TableRow key={i.id}>
                         <TableCell>
-                          <div className="font-medium text-[var(--sp-text)]">{i.title}</div>
+                          <div className="font-medium text-foreground">{i.title}</div>
                         </TableCell>
                         <TableCell>
-                          <Badge variant="outline" className="text-[var(--sp-text-secondary)]">
-                            {i.impact}
-                          </Badge>
+                          <Badge variant="outline">{i.impact}</Badge>
                         </TableCell>
-                        <TableCell className="text-[var(--sp-text-secondary)]">
+                        <TableCell className="text-muted-foreground">
                           {i.resolvedAt ? format(i.resolvedAt, "PP") : "—"}
                         </TableCell>
                         <TableCell>
                           {i.components.length === 0 ? (
-                            <span className="text-xs text-[var(--sp-text-tertiary)]">None</span>
+                            <span className="text-xs text-muted-foreground">None</span>
                           ) : (
                             <div className="flex flex-wrap gap-1.5">
                               {i.components.map((c) => (
-                                <span
-                                  key={c.componentId}
-                                  className="inline-flex items-center gap-1.5 rounded-md border border-[var(--sp-border)] bg-[var(--sp-surface)] px-2.5 py-1 text-xs text-[var(--sp-text-secondary)]"
-                                >
+                                <Badge key={c.componentId} variant="secondary" className="gap-1">
                                   <ServerIcon className="h-3 w-3" />
                                   {c.component.name}
-                                </span>
+                                </Badge>
                               ))}
                             </div>
                           )}
@@ -207,15 +197,15 @@ export default async function AdminIncidentsPage() {
                         <TableCell>
                           {i.updates[0] ? (
                             <div className="max-w-xs">
-                              <p className="truncate text-sm text-[var(--sp-text)]">
+                              <p className="truncate text-sm text-foreground">
                                 {i.updates[0].message}
                               </p>
-                              <p className="text-xs text-[var(--sp-text-tertiary)]">
+                              <p className="text-xs text-muted-foreground">
                                 {formatDistanceToNow(i.updates[0].createdAt)} ago
                               </p>
                             </div>
                           ) : (
-                            <span className="text-xs text-[var(--sp-text-tertiary)]">No updates</span>
+                            <span className="text-xs text-muted-foreground">No updates</span>
                           )}
                         </TableCell>
                       </TableRow>
