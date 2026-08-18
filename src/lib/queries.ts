@@ -1,5 +1,28 @@
 import { prisma } from "./db";
 
+export async function getPublicStatusPages() {
+  return prisma.statusPage.findMany({
+    where: { isPublic: true },
+    include: {
+      organization: true,
+      components: {
+        orderBy: { position: "asc" },
+        include: {
+          checks: {
+            include: {
+              results: {
+                orderBy: { checkedAt: "desc" },
+                take: 100,
+              },
+            },
+          },
+        },
+      },
+    },
+    orderBy: { name: "asc" },
+  });
+}
+
 export async function getStatusPageBySlug(slug: string) {
   return prisma.statusPage.findUnique({
     where: { slug },
