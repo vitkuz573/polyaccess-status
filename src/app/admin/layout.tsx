@@ -48,7 +48,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     select: { name: true },
   });
 
-  const SidebarContent = (
+  const SidebarContent = ({ wrapLink }: { wrapLink?: (link: React.ReactNode, href: string) => React.ReactNode } = {}) => (
     <div className="flex h-full flex-col">
       <div className="flex h-16 shrink-0 items-center gap-3 border-b px-6">
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 ring-1 ring-primary/20">
@@ -63,15 +63,18 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <nav className="flex-1 space-y-1 overflow-y-auto p-4">
         {links.map((l) => {
           const Icon = l.icon;
+          const linkBody = (
+            <Link href={l.href} className="block">
+              <Button variant="ghost" className="w-full justify-start gap-3">
+                <Icon className="h-4 w-4" />
+                {l.label}
+              </Button>
+            </Link>
+          );
           return (
-            <SheetClose asChild key={l.href}>
-              <Link href={l.href} className="block">
-                <Button variant="ghost" className="w-full justify-start gap-3">
-                  <Icon className="h-4 w-4" />
-                  {l.label}
-                </Button>
-              </Link>
-            </SheetClose>
+            <div key={l.href}>
+              {wrapLink ? wrapLink(linkBody, l.href) : linkBody}
+            </div>
           );
         })}
       </nav>
@@ -87,7 +90,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       <aside className="fixed inset-y-0 left-0 z-40 hidden h-screen w-64 flex-col border-r bg-card lg:flex">
-        {SidebarContent}
+        <SidebarContent />
       </aside>
 
       <div className="flex h-screen flex-1 flex-col overflow-hidden lg:pl-64">
@@ -104,7 +107,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                 <SheetHeader className="sr-only">
                   <SheetTitle>Admin navigation</SheetTitle>
                 </SheetHeader>
-                {SidebarContent}
+                <SidebarContent
+                  wrapLink={(link) => <SheetClose asChild>{link}</SheetClose>}
+                />
               </SheetContent>
             </Sheet>
             <div>
