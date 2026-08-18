@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getCurrentAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -24,7 +23,16 @@ const links = [
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const admin = await getCurrentAdmin();
   if (!admin) {
-    redirect("/admin/login");
+    return (
+      <div className="status-dark flex min-h-screen items-center justify-center bg-[#020617] text-[var(--sp-text)]">
+        <div className="text-center">
+          <p className="text-lg">You are not signed in.</p>
+          <Link href="/admin/login" className="mt-4 inline-block text-[var(--sp-emerald)] underline">
+            Go to login
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   const organization = await prisma.organization.findUnique({
