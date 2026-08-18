@@ -149,3 +149,7 @@ export function incidentStatusLabel(status: IncidentStatus): string {
 export function maintenanceStatusTheme(status: MaintenanceStatus): StatusTheme {
   return maintenanceStatusMeta[status]?.theme ?? statusMeta.maintenance;
 }
+
+export function maintenanceStatusLabel(status: MaintenanceStatus): string {
+  return maintenanceStatusMeta[status]?.label ?? status;
+}
