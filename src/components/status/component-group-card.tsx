@@ -67,7 +67,7 @@ export function ComponentGroupCard({
 
                 <div className="flex shrink-0 items-center gap-4 text-sm">
                   <span className="hidden tabular-nums text-[var(--sp-text-tertiary)] sm:inline">
-                    {uptime.toFixed(2)}% uptime
+                    {results.length > 0 ? `${uptime.toFixed(2)}% uptime` : "No uptime data"}
                   </span>
                   <div className="flex w-[7.5rem] items-center justify-end gap-2">
                     <StatusDot status={component.status} pulse glow={false} />
@@ -79,7 +79,13 @@ export function ComponentGroupCard({
               </div>
 
               <div className="px-5 pb-4 sm:px-6">
-                <UptimeBar value={uptime} status={component.status} />
+                {results.length > 0 ? (
+                  <UptimeBar value={uptime} status={component.status} />
+                ) : (
+                  <p className="text-xs text-[var(--sp-text-tertiary)]">
+                    No component checks yet
+                  </p>
+                )}
               </div>
             </div>
           );

@@ -91,24 +91,30 @@ export default async function StatusPage({ params }: Props) {
             </div>
           </div>
 
-          {page.incidents.length > 0 && (
-            <section className="space-y-4">
-              <h2 className="text-lg font-semibold tracking-tight text-[var(--sp-text)]">
-                Active Incidents
-              </h2>
+          <section className="space-y-4">
+            <h2 className="text-lg font-semibold tracking-tight text-[var(--sp-text)]">
+              Active Incidents
+            </h2>
+            {page.incidents.length > 0 ? (
               <div className="space-y-4">
                 {page.incidents.map((incident) => (
                   <IncidentCard key={incident.id} incident={incident} />
                 ))}
               </div>
-            </section>
-          )}
+            ) : (
+              <div className="status-glass rounded-2xl p-6 text-center">
+                <p className="text-sm text-[var(--sp-text-secondary)]">
+                  No active incidents
+                </p>
+              </div>
+            )}
+          </section>
 
-          {page.maintenances.length > 0 && (
-            <section className="space-y-4">
-              <h2 className="text-lg font-semibold tracking-tight text-[var(--sp-text)]">
-                Scheduled Maintenance
-              </h2>
+          <section className="space-y-4">
+            <h2 className="text-lg font-semibold tracking-tight text-[var(--sp-text)]">
+              Scheduled Maintenance
+            </h2>
+            {page.maintenances.length > 0 ? (
               <div className="space-y-4">
                 {page.maintenances.map((maintenance) => (
                   <MaintenanceCard
@@ -117,8 +123,14 @@ export default async function StatusPage({ params }: Props) {
                   />
                 ))}
               </div>
-            </section>
-          )}
+            ) : (
+              <div className="status-glass rounded-2xl p-6 text-center">
+                <p className="text-sm text-[var(--sp-text-secondary)]">
+                  No scheduled maintenance
+                </p>
+              </div>
+            )}
+          </section>
 
           <section className="space-y-4">
             <div className="flex items-center justify-between">
@@ -140,18 +152,24 @@ export default async function StatusPage({ params }: Props) {
             </div>
           </section>
 
-          {history.length > 0 && (
-            <section className="space-y-4">
-              <h2 className="text-lg font-semibold tracking-tight text-[var(--sp-text)]">
-                Incident History
-              </h2>
+          <section className="space-y-4">
+            <h2 className="text-lg font-semibold tracking-tight text-[var(--sp-text)]">
+              Incident History
+            </h2>
+            {history.length > 0 ? (
               <div className="space-y-3">
                 {history.map((incident) => (
                   <IncidentHistoryCard key={incident.id} incident={incident} />
                 ))}
               </div>
-            </section>
-          )}
+            ) : (
+              <div className="status-glass rounded-2xl p-6 text-center">
+                <p className="text-sm text-[var(--sp-text-secondary)]">
+                  No resolved incidents
+                </p>
+              </div>
+            )}
+          </section>
 
           <SubscriptionForm slug={slug} />
         </div>

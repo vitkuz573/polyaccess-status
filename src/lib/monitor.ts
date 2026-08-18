@@ -101,10 +101,14 @@ export async function runCheck(checkId: string): Promise<CheckResultPayload> {
 
   await aggregateComponentStatus(check.componentId);
 
-  await redis.publish(
-    "status:updates",
-    JSON.stringify({ componentId: check.componentId, status: payload.status })
-  );
+  try {
+    await redis.publish(
+      "status:updates",
+      JSON.stringify({ componentId: check.componentId, status: payload.status })
+    );
+  } catch (err) {
+    console.error("Failed to publish status update to Redis:", err);
+  }
 
   return payload;
 }

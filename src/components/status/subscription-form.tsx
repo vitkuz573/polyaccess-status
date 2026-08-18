@@ -90,7 +90,7 @@ export function SubscriptionForm({ slug }: SubscriptionFormProps) {
               <Input
                 id="subscribe-email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder="Enter your email address"
                 autoComplete="email"
                 className="h-10 w-full rounded-lg border-[var(--sp-border-strong)] bg-[var(--sp-bg-elevated)]/50 px-3 text-sm text-[var(--sp-text)] placeholder:text-[var(--sp-text-tertiary)] focus-visible:border-[var(--sp-emerald)] focus-visible:ring-[var(--sp-emerald)]/20"
                 {...register("email")}

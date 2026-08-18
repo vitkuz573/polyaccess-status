@@ -10,6 +10,9 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+# Build-time placeholders; runtime values are supplied by the orchestrator.
+ENV ADMIN_API_KEY=build-time-admin-api-key-at-least-32-characters-long
+ENV ACCESS_TOKEN_SECRET=build-time-access-token-secret-min-32-characters-long
 RUN npx prisma generate
 RUN npm run build
 
