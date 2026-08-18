@@ -1,39 +1,35 @@
 "use client"
 
-import { useTheme } from "next-themes"
 import { Toaster as Sonner, type ToasterProps } from "sonner"
 import { CircleCheckIcon, InfoIcon, TriangleAlertIcon, OctagonXIcon, Loader2Icon } from "lucide-react"
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = "dark" } = useTheme()
-
   return (
     <Sonner
-      theme={theme as ToasterProps["theme"]}
+      theme="dark"
       className="toaster group"
       icons={{
-        success: <CircleCheckIcon className="size-4 text-[var(--sp-emerald)]" />,
-        info: <InfoIcon className="size-4 text-[var(--sp-blue)]" />,
-        warning: <TriangleAlertIcon className="size-4 text-[var(--sp-yellow)]" />,
-        error: <OctagonXIcon className="size-4 text-[var(--sp-red)]" />,
-        loading: <Loader2Icon className="size-4 animate-spin text-[var(--sp-blue)]" />,
+        success: <CircleCheckIcon className="h-4 w-4 text-[var(--sp-emerald)]" />,
+        info: <InfoIcon className="h-4 w-4 text-[var(--sp-blue)]" />,
+        warning: <TriangleAlertIcon className="h-4 w-4 text-[var(--sp-yellow)]" />,
+        error: <OctagonXIcon className="h-4 w-4 text-[var(--sp-red)]" />,
+        loading: <Loader2Icon className="h-4 w-4 animate-spin text-[var(--sp-blue)]" />,
       }}
       style={
         {
-          "--normal-bg": "var(--sp-bg-elevated)",
-          "--normal-text": "var(--sp-text)",
-          "--normal-border": "var(--sp-border-strong)",
-          "--border-radius": "var(--radius)",
+          "--normal-bg": "#0b1021",
+          "--normal-text": "#f8fafc",
+          "--normal-border": "rgba(255,255,255,0.12)",
         } as React.CSSProperties
       }
       toastOptions={{
         classNames: {
           toast:
-            "group-[.toaster]:bg-[var(--sp-bg-elevated)] group-[.toaster]:text-[var(--sp-text)] group-[.toaster]:border-[var(--sp-border-strong)] group-[.toaster]:shadow-[0_8px_30px_rgb(0,0,0,0.35)] group-[.toaster]:font-sans group-[.toaster]:rounded-xl group-[.toaster]:px-4 group-[.toaster]:py-3",
-          description: "group-[.toaster]:text-[var(--sp-text-secondary)]",
-          actionButton: "group-[.toaster]:bg-[var(--sp-emerald)] group-[.toaster]:text-[#020617]",
-          cancelButton: "group-[.toaster]:bg-[var(--sp-surface)] group-[.toaster]:text-[var(--sp-text-secondary)]",
-          closeButton: "group-[.toaster]:text-[var(--sp-text-tertiary)] group-[.toaster]:hover:text-[var(--sp-text)]",
+            "bg-[#0b1021] text-[var(--sp-text)] border border-[var(--sp-border-strong)] shadow-[0_8px_30px_rgb(0,0,0,0.45)] rounded-xl px-4 py-3",
+          description: "text-[var(--sp-text-secondary)]",
+          actionButton: "bg-[var(--sp-emerald)] text-[#020617]",
+          cancelButton: "bg-[var(--sp-surface)] text-[var(--sp-text-secondary)]",
+          closeButton: "text-[var(--sp-text-tertiary)] hover:text-[var(--sp-text)]",
         },
       }}
       {...props}

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useTransition, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,7 +9,6 @@ import { ShieldCheckIcon, AlertCircleIcon, Loader2Icon } from "lucide-react";
 import { toast } from "sonner";
 
 function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("from") ?? "/admin";
 
@@ -17,7 +16,7 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
 
   function validate(): boolean {
     const errors: { email?: string; password?: string } = {};
@@ -38,23 +37,27 @@ function LoginForm() {
     setError("");
     if (!validate()) return;
 
-    const res = await fetch("/api/admin/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+    setIsPending(true);
+    try {
+      const res = await fetch("/api/admin/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      setError(data.error ?? "Invalid credentials");
-      return;
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error ?? "Invalid credentials");
+        return;
+      }
+
+      toast.success("Signed in successfully");
+      window.location.assign(redirectTo);
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setIsPending(false);
     }
-
-    toast.success("Signed in successfully");
-    startTransition(() => {
-      router.push(redirectTo);
-      router.refresh();
-    });
   }
 
   return (
